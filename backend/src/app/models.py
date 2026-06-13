@@ -74,6 +74,12 @@ class WorkoutPlan(Base):
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
+    sessions: Mapped[list["PlannedSession"]] = relationship(
+        back_populates="plan",
+        cascade="all, delete-orphan",
+        order_by="PlannedSession.order_index",
+    )
+
 
 class PlannedSession(Base):
     __tablename__ = "planned_sessions"
@@ -83,6 +89,13 @@ class PlannedSession(Base):
     name: Mapped[str] = mapped_column(String(160))
     scheduled_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     order_index: Mapped[int] = mapped_column(Integer, default=0)
+
+    plan: Mapped[WorkoutPlan] = relationship(back_populates="sessions")
+    exercises: Mapped[list["PlannedExercise"]] = relationship(
+        back_populates="planned_session",
+        cascade="all, delete-orphan",
+        order_by="PlannedExercise.id",
+    )
 
 
 class PlannedExercise(Base):
@@ -95,6 +108,9 @@ class PlannedExercise(Base):
     target_reps: Mapped[int | None] = mapped_column(Integer, nullable=True)
     target_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    exercise: Mapped[Exercise] = relationship()
+    planned_session: Mapped[PlannedSession] = relationship(back_populates="exercises")
 
 
 class WorkoutSession(Base):

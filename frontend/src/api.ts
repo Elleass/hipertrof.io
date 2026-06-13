@@ -27,11 +27,38 @@ export type WorkoutExercise = {
 
 export type WorkoutSession = {
   id: number;
+  plan_id?: number | null;
+  planned_session_id?: number | null;
   status: "PLANNED" | "IN_PROGRESS" | "PAUSED" | "COMPLETED" | "CANCELLED" | "MISSED";
   started_at: string;
   completed_at?: string | null;
   notes?: string | null;
   exercises: WorkoutExercise[];
+};
+
+export type PlannedExercise = {
+  id: number;
+  exercise: Exercise;
+  target_sets?: number | null;
+  target_reps?: number | null;
+  target_weight?: number | null;
+  notes?: string | null;
+};
+
+export type PlannedSession = {
+  id: number;
+  name: string;
+  scheduled_date?: string | null;
+  order_index: number;
+  exercises: PlannedExercise[];
+};
+
+export type WorkoutPlan = {
+  id: number;
+  name: string;
+  description?: string | null;
+  created_at: string;
+  sessions: PlannedSession[];
 };
 
 export type WorkoutSummary = {
@@ -71,11 +98,12 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
 export const api = {
   exercises: () => request<Exercise[]>("/exercises"),
+  plans: () => request<WorkoutPlan[]>("/plans"),
   stats: () => request<StatisticsSummary>("/statistics/summary"),
-  startWorkout: () =>
+  startWorkout: (payload?: { notes?: string; plan_id?: number; planned_session_id?: number }) =>
     request<WorkoutSession>("/workout-sessions/start", {
       method: "POST",
-      body: JSON.stringify({ notes: "Ad-hoc strength workout" }),
+      body: JSON.stringify(payload ?? { notes: "Ad-hoc strength workout" }),
     }),
   getWorkout: (id: number) => request<WorkoutSession>(`/workout-sessions/${id}`),
   addExercise: (sessionId: number, exerciseId: number) =>
@@ -84,10 +112,18 @@ export const api = {
       body: JSON.stringify({ exercise_id: exerciseId }),
     }),
   smartAutofill: (exerciseId: number) => request<SmartAutofill>(`/smart-autofill?exercise_id=${exerciseId}`),
-  addSet: (workoutExerciseId: number, payload: { weight: number; reps: number; rpe?: number | null }) =>
+  addSet: (workoutExerciseId: number, payload: { weight: number; reps: number; rpe?: number | null; completed?: boolean }) =>
     request<WorkoutSet>(`/workout-exercises/${workoutExerciseId}/sets`, {
       method: "POST",
       body: JSON.stringify({ ...payload, completed: true }),
+    }),
+  updateSet: (
+    setId: number,
+    payload: { weight?: number; reps?: number; rpe?: number | null; completed?: boolean },
+  ) =>
+    request<WorkoutSet>(`/workout-sets/${setId}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
     }),
   completeWorkout: (sessionId: number) =>
     request<WorkoutSummary>(`/workout-sessions/${sessionId}/complete`, {

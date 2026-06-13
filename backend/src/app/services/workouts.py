@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from app import models
 from app.config import settings
-from app.schemas import AddSetRequest, SmartAutofillRead, StatisticsSummary, WorkoutSummary
+from app.schemas import AddSetRequest, SmartAutofillRead, StatisticsSummary, UpdateSetRequest, WorkoutSummary
 
 
 def current_athlete_id() -> int:
@@ -33,6 +33,23 @@ def get_session_for_athlete(db: Session, session_id: int) -> models.WorkoutSessi
 
 
 def start_session(db: Session, notes: str | None = None, plan_id: int | None = None, planned_session_id: int | None = None) -> models.WorkoutSession:
+    planned_exercises: list[models.PlannedExercise] = []
+    if planned_session_id is not None:
+        planned_session = db.scalar(
+            select(models.PlannedSession)
+            .join(models.WorkoutPlan)
+            .where(
+                models.PlannedSession.id == planned_session_id,
+                (models.WorkoutPlan.owner_id == current_athlete_id())
+                | (models.WorkoutPlan.assigned_athlete_id == current_athlete_id()),
+            )
+            .options(selectinload(models.PlannedSession.exercises))
+        )
+        if planned_session is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Planned session not found")
+        plan_id = planned_session.plan_id
+        planned_exercises = list(planned_session.exercises)
+
     session = models.WorkoutSession(
         athlete_id=current_athlete_id(),
         plan_id=plan_id,
@@ -41,6 +58,17 @@ def start_session(db: Session, notes: str | None = None, plan_id: int | None = N
         notes=notes,
     )
     db.add(session)
+    db.flush()
+
+    for index, planned_exercise in enumerate(planned_exercises, start=1):
+        db.add(
+            models.WorkoutExercise(
+                workout_session_id=session.id,
+                exercise_id=planned_exercise.exercise_id,
+                order_index=index,
+            )
+        )
+
     db.commit()
     db.refresh(session)
     return get_session_for_athlete(db, session.id)
@@ -107,6 +135,36 @@ def add_set(db: Session, workout_exercise_id: int, payload: AddSetRequest) -> mo
         completed=payload.completed,
     )
     db.add(workout_set)
+    db.commit()
+    db.refresh(workout_set)
+    return workout_set
+
+
+def update_set(db: Session, workout_set_id: int, payload: UpdateSetRequest) -> models.WorkoutSet:
+    workout_set = db.scalar(
+        select(models.WorkoutSet)
+        .join(models.WorkoutExercise)
+        .join(models.WorkoutSession)
+        .where(
+            models.WorkoutSet.id == workout_set_id,
+            models.WorkoutSession.athlete_id == current_athlete_id(),
+            models.WorkoutSession.status == models.WorkoutStatus.IN_PROGRESS,
+        )
+    )
+    if workout_set is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workout set not found")
+
+    if payload.weight is not None:
+        workout_set.weight = payload.weight
+    if payload.reps is not None:
+        workout_set.reps = payload.reps
+    if payload.rest_seconds is not None:
+        workout_set.rest_seconds = payload.rest_seconds
+    if payload.rpe is not None:
+        workout_set.rpe = payload.rpe
+    if payload.completed is not None:
+        workout_set.completed = payload.completed
+
     db.commit()
     db.refresh(workout_set)
     return workout_set

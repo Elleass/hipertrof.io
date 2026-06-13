@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import Base, SessionLocal, engine
-from app.routers import exercises, workouts
+from app.routers import exercises, plans, workouts
 from app.seed import seed_demo_data
 
 
@@ -28,6 +28,7 @@ app.add_middleware(
 )
 
 app.include_router(exercises.router)
+app.include_router(plans.router)
 app.include_router(workouts.router)
 
 

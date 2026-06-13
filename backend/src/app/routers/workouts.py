@@ -13,6 +13,7 @@ from app.schemas import (
     StatisticsSummary,
     SurveyRead,
     SurveyRequest,
+    UpdateSetRequest,
     WorkoutExerciseRead,
     WorkoutSessionRead,
     WorkoutSetRead,
@@ -58,6 +59,11 @@ def add_exercise(session_id: int, payload: AddExerciseRequest, db: Session = Dep
 @router.post("/workout-exercises/{workout_exercise_id}/sets", response_model=WorkoutSetRead)
 def add_set(workout_exercise_id: int, payload: AddSetRequest, db: Session = Depends(get_db)) -> models.WorkoutSet:
     return workouts.add_set(db, workout_exercise_id, payload)
+
+
+@router.patch("/workout-sets/{workout_set_id}", response_model=WorkoutSetRead)
+def update_set(workout_set_id: int, payload: UpdateSetRequest, db: Session = Depends(get_db)) -> models.WorkoutSet:
+    return workouts.update_set(db, workout_set_id, payload)
 
 
 @router.post("/workout-sessions/{session_id}/complete", response_model=WorkoutSummary)
