@@ -4,13 +4,13 @@ import { DashboardView } from "./DashboardView";
 
 const plan = {
   id: 1,
-  name: "Hypertrophy Base Split",
-  description: "Simple three-day split",
+  name: "Baza hipertrofii",
+  description: "Prosty trzydniowy split",
   created_at: "2026-06-13T00:00:00Z",
   sessions: [
     {
       id: 1,
-      name: "Leg Day",
+      name: "Dzień nóg",
       order_index: 1,
       exercises: [],
     },
@@ -34,7 +34,7 @@ describe("DashboardView", () => {
       />,
     );
 
-    expect(screen.getByText("Hypertrophy Base Split")).toBeTruthy();
-    expect(screen.getByText("Enter Plan")).toBeTruthy();
+    expect(screen.getByText("Baza hipertrofii")).toBeTruthy();
+    expect(screen.getByText("Wejdź w plan")).toBeTruthy();
   });
 });

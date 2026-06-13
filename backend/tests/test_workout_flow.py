@@ -51,7 +51,7 @@ def test_complete_workout_without_sets_is_rejected():
     response = client.post(f"/workout-sessions/{session['id']}/complete")
 
     assert response.status_code == 400
-    assert "at least one exercise" in response.json()["detail"]
+    assert "co najmniej jedno ćwiczenie" in response.json()["detail"]
 
 
 def test_start_planned_session_creates_planned_sets():

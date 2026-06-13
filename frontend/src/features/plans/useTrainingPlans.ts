@@ -24,7 +24,7 @@ export function useTrainingPlans() {
       setPlans(planList);
       setStats(summaryStats);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not load training data");
+      setError(err instanceof Error ? err.message : "Nie udało się wczytać danych treningowych");
     } finally {
       setLoading(false);
     }
@@ -48,7 +48,7 @@ export function useTrainingPlans() {
       await api.updatePlannedExercise(plannedExercise.id, payload);
       await refreshPlans();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not update planned exercise");
+      setError(err instanceof Error ? err.message : "Nie udało się zaktualizować zaplanowanego ćwiczenia");
     } finally {
       setLoading(false);
     }

@@ -47,7 +47,7 @@ def get_plan(plan_id: int, db: Session = Depends(get_db)) -> models.WorkoutPlan:
         .options(plan_options())
     )
     if plan is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Training plan not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono planu treningowego")
     return plan
 
 
@@ -71,7 +71,7 @@ def update_planned_exercise(
         .options(selectinload(models.PlannedExercise.exercise))
     )
     if planned_exercise is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Planned exercise not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono zaplanowanego ćwiczenia")
 
     if payload.target_sets is not None:
         planned_exercise.target_sets = payload.target_sets

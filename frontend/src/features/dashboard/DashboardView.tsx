@@ -40,39 +40,39 @@ export function DashboardView({
       <section className="dashboard-content">
         <header className="content-header">
           <div>
-            <p className="eyebrow">Active Programs</p>
-            <h2>Manage your current training cycles</h2>
-            <span>Choose a plan, review its sessions, then start training.</span>
+            <p className="eyebrow">Aktywne programy</p>
+            <h2>Zarządzaj obecnymi cyklami treningowymi</h2>
+            <span>Wybierz plan, przejrzyj sesje i rozpocznij trening.</span>
           </div>
           <button className="dark-action" type="button" disabled>
-            Create New Plan
+            Utwórz nowy plan
           </button>
         </header>
 
         {error && <div className="notice error">{error}</div>}
 
-        <section className="stats-strip" aria-label="Training metrics">
+        <section className="stats-strip" aria-label="Metryki treningowe">
           <div>
-            <span>Completed</span>
+            <span>Ukończone</span>
             <strong>{stats?.completed_workouts ?? 0}</strong>
           </div>
           <div>
-            <span>Total tonnage</span>
+            <span>Całkowita objętość</span>
             <strong>{Math.round(stats?.total_tonnage ?? 0)} kg</strong>
           </div>
           <div>
-            <span>Active tonnage</span>
+            <span>Objętość aktywna</span>
             <strong>{Math.round(tonnage)} kg</strong>
           </div>
         </section>
 
         <section id="plans" className="program-grid">
-          {plans.length === 0 && <div className="empty-state">No training plans yet.</div>}
+          {plans.length === 0 && <div className="empty-state">Nie masz jeszcze planów treningowych.</div>}
 
           {plans.map((plan) => (
             <article key={plan.id} className="program-card">
               <div className="card-topline">
-                <span>{plan.name.includes("Hypertrophy") ? "Hypertrophy" : "Training"}</span>
+                <span>{plan.name.toLowerCase().includes("hypertrophy") || plan.name.toLowerCase().includes("hipertrof") ? "Hipertrofia" : "Trening"}</span>
                 <small>{plan.sessions.length}</small>
               </div>
               <h3>{plan.name}</h3>
@@ -80,25 +80,25 @@ export function DashboardView({
 
               <div className="card-meta">
                 <div>
-                  <span>Frequency</span>
-                  <strong>{plan.sessions.length} / week</strong>
+                  <span>Częstotliwość</span>
+                  <strong>{plan.sessions.length} / tydzień</strong>
                 </div>
                 <div>
-                  <span>Progress</span>
-                  <strong>{stats?.completed_workouts ?? 0} done</strong>
+                  <span>Postęp</span>
+                  <strong>{stats?.completed_workouts ?? 0} ukończone</strong>
                 </div>
               </div>
 
               <div className="mini-exercises">
                 {plan.sessions.map((plannedSession) => (
                   <span key={plannedSession.id}>
-                    {plannedSession.name}: {plannedSession.exercises.length} exercises
+                    {plannedSession.name}: {plannedSession.exercises.length} ćwiczenia
                   </span>
                 ))}
               </div>
 
               <button className="secondary-action" type="button" onClick={() => onOpenPlan(plan)}>
-                Enter Plan
+                Wejdź w plan
               </button>
             </article>
           ))}

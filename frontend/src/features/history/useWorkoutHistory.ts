@@ -18,7 +18,7 @@ export function useWorkoutHistory(navigate: (path: string) => void) {
     try {
       setHistory(await api.history());
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not load workout history");
+      setError(err instanceof Error ? err.message : "Nie udało się wczytać historii treningów");
     } finally {
       setLoading(false);
     }
@@ -33,7 +33,7 @@ export function useWorkoutHistory(navigate: (path: string) => void) {
     } catch (err) {
       setSelectedHistoryWorkout(null);
       setSelectedHistoryItem(null);
-      setError(err instanceof Error ? err.message : "Could not load workout history");
+      setError(err instanceof Error ? err.message : "Nie udało się wczytać historii treningów");
     } finally {
       setLoading(false);
     }

@@ -4,9 +4,9 @@ import { SessionDetailView } from "./SessionDetailView";
 
 const exercise = {
   id: 1,
-  name: "Back Squat",
-  category: "Strength",
-  muscle_group: "Legs",
+  name: "Przysiad ze sztangą",
+  category: "Siła",
+  muscle_group: "Nogi",
   technique_url: null,
 };
 
@@ -16,7 +16,7 @@ const plannedExercise = {
   target_sets: 4,
   target_reps: 8,
   target_weight: 90,
-  notes: "Brace hard.",
+  notes: "Mocno napnij tułów.",
 };
 
 const workoutExercise = {
@@ -41,7 +41,7 @@ describe("SessionDetailView", () => {
         exercises={[exercise]}
         loading={false}
         plan={{ id: 1, name: "Plan", description: "", created_at: "2026-06-13T00:00:00Z", sessions: [] }}
-        plannedSession={{ id: 1, name: "Leg Day", order_index: 1, exercises: [plannedExercise] }}
+        plannedSession={{ id: 1, name: "Dzień nóg", order_index: 1, exercises: [plannedExercise] }}
         plannedTotals={{ exercises: 1, sets: 4 }}
         previousByExercise={{}}
         progressPercent={0}
@@ -79,15 +79,15 @@ describe("SessionDetailView", () => {
       />,
     );
 
-    const weight = screen.getByLabelText("Back Squat set 1 weight") as HTMLInputElement;
-    const reps = screen.getByLabelText("Back Squat set 1 reps") as HTMLInputElement;
+    const weight = screen.getByLabelText("Przysiad ze sztangą seria 1 ciężar") as HTMLInputElement;
+    const reps = screen.getByLabelText("Przysiad ze sztangą seria 1 powtórzenia") as HTMLInputElement;
 
     expect(weight.value).toBe("90");
     expect(reps.value).toBe("8");
 
     fireEvent.change(weight, { target: { value: "92.5" } });
     fireEvent.change(reps, { target: { value: "9" } });
-    fireEvent.click(screen.getAllByText("Done")[0]);
+    fireEvent.click(screen.getAllByText("Zapisz")[0]);
 
     expect(onSetEditChange).toHaveBeenCalled();
     expect(onCompleteSet).toHaveBeenCalled();

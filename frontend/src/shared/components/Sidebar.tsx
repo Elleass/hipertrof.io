@@ -16,25 +16,25 @@ export function Sidebar({ mode, loading, session, onNavigateDashboard, onNavigat
     <aside className={[mode === "session" ? "sidebar detail-sidebar" : "sidebar", workoutMode ? "workout-sidebar" : ""].join(" ")}>
       <div className={mode === "session" ? "brand-lockup large" : "brand-lockup"}>
         <strong>hipertrof.io</strong>
-        <span>Precision Training</span>
+        <span>Precyzyjny trening</span>
       </div>
 
       {!workoutMode && (
         <button className="primary-action" type="button" onClick={onStartSession} disabled={loading || session?.status === "IN_PROGRESS"}>
-          Start Session
+          Rozpocznij sesję
         </button>
       )}
 
-      <nav className="nav-list" aria-label="Primary navigation">
+      <nav className="nav-list" aria-label="Główna nawigacja">
         <button className={mode === "dashboard" ? "active" : ""} type="button" onClick={onNavigateDashboard}>
-          Training Plans
+          Plany treningowe
         </button>
         <button className={mode === "history" ? "active" : ""} type="button" onClick={onNavigateHistory}>
-          History
+          Historia
         </button>
         {!workoutMode && (
           <button type="button" disabled>
-            Profile
+            Profil
           </button>
         )}
       </nav>
@@ -42,10 +42,10 @@ export function Sidebar({ mode, loading, session, onNavigateDashboard, onNavigat
       {!workoutMode && (
         <div className="sidebar-footer">
           <button type="button" disabled>
-            Settings
+            Ustawienia
           </button>
           <button type="button" disabled>
-            Support
+            Pomoc
           </button>
         </div>
       )}

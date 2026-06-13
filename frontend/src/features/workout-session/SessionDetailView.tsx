@@ -11,7 +11,7 @@ import {
 } from "../../shared/api/client";
 import { Sidebar } from "../../shared/components/Sidebar";
 import { PlannedTotals, PreviousByExercise, SetDraft, SetEdit } from "../../shared/types/app";
-import { formatTimer, previousSetValue } from "../../shared/utils/workout";
+import { formatTimer, formatWorkoutStatus, previousSetValue } from "../../shared/utils/workout";
 
 type SessionDetailViewProps = {
   activeExercise: WorkoutExercise | null;
@@ -115,16 +115,16 @@ export function SessionDetailView({
         <header className="session-header workout-header">
           <div>
             <p className="breadcrumb">
-              Training Plans / {plan?.name ?? "Select Plan"} / {plannedSession?.name ?? "Session"}
+              Plany treningowe / {plan?.name ?? "Wybierz plan"} / {plannedSession?.name ?? "Sesja"}
             </p>
-            <h2>{session?.status === "IN_PROGRESS" && activeExercise ? activeExercise.exercise.name : plannedSession?.name ?? "Choose a session"}</h2>
+            <h2>{session?.status === "IN_PROGRESS" && activeExercise ? activeExercise.exercise.name : plannedSession?.name ?? "Wybierz sesję"}</h2>
             <div className="session-tags">
-              <span>{session?.status ?? "READY"}</span>
+              <span>{formatWorkoutStatus(session?.status ?? "READY")}</span>
               <span>
-                {completedSetCount}/{plannedTotals.sets} sets
+                {completedSetCount}/{plannedTotals.sets} serii
               </span>
               <span>{formatTimer(sessionElapsed)}</span>
-              <span>Rest {formatTimer(restRemaining)}</span>
+              <span>Przerwa {formatTimer(restRemaining)}</span>
             </div>
           </div>
           {session?.status === "IN_PROGRESS" && (
@@ -133,16 +133,16 @@ export function SessionDetailView({
               type="button"
               onClick={onCompleteWorkout}
               disabled={loading || completedSetCount === 0}
-              title={completedSetCount === 0 ? "Complete at least one set first" : undefined}
+              title={completedSetCount === 0 ? "Ukończ najpierw co najmniej jedną serię" : undefined}
             >
-              Finish Session
+              Zakończ sesję
             </button>
           )}
         </header>
 
         <div className="progress-block">
           <div>
-            <span>Workout progress</span>
+            <span>Postęp treningu</span>
             <strong>{progressPercent}%</strong>
           </div>
           <div className="progress-track">
@@ -153,18 +153,18 @@ export function SessionDetailView({
         {error && <div className="notice error">{error}</div>}
         {statusMessage && !error && <div className="notice success">{statusMessage}</div>}
 
-        {!plannedSession && <div className="empty-state dark-empty">This planned session was not found.</div>}
+        {!plannedSession && <div className="empty-state dark-empty">Nie znaleziono tej zaplanowanej sesji.</div>}
 
         {plannedSession && !session && (
           <>
             <div className="session-start-panel">
               <div>
                 <strong>{plannedSession.name}</strong>
-                <span>Review planned exercises and suggested values, then start the workout.</span>
+                <span>Sprawdź zaplanowane ćwiczenia i sugerowane wartości, a potem rozpocznij trening.</span>
               </div>
               {plan && (
                 <button className="primary-action" type="button" onClick={() => onStartPlannedWorkout(plan, plannedSession)} disabled={loading}>
-                  Start Session
+                  Rozpocznij sesję
                 </button>
               )}
             </div>
@@ -176,7 +176,7 @@ export function SessionDetailView({
                     <span>
                       <strong>{target.exercise.name}</strong>
                       <small>
-                        Target: {target.target_sets ?? "-"} sets x {target.target_reps ?? "-"} reps @{" "}
+                        Cel: {target.target_sets ?? "-"} serii x {target.target_reps ?? "-"} powt. @{" "}
                         {target.target_weight ?? "-"} kg
                       </small>
                     </span>
@@ -195,7 +195,7 @@ export function SessionDetailView({
           <>
             {session.exercises.length === 0 && session.status === "IN_PROGRESS" && (
               <div className="empty-state workout-empty">
-                No active exercise yet. Choose one exercise to begin this ad-hoc session.
+                Brak aktywnego ćwiczenia. Wybierz ćwiczenie, żeby rozpocząć sesję ad hoc.
                 <div className="session-picker compact-picker">
                   <select
                     value={selectedExerciseId ?? ""}
@@ -208,7 +208,7 @@ export function SessionDetailView({
                     ))}
                   </select>
                   <button className="dark-action" type="button" onClick={onAddExercise} disabled={loading}>
-                    Add Exercise
+                    Dodaj ćwiczenie
                   </button>
                 </div>
               </div>
@@ -219,11 +219,11 @@ export function SessionDetailView({
                 <article className="active-workout-card">
                   <div className="active-workout-top">
                     <div>
-                      <p className="eyebrow">Current Exercise</p>
+                      <p className="eyebrow">Aktualne ćwiczenie</p>
                       <h3>{activeExercise.exercise.name}</h3>
                       <span>
-                        Target: {activePlannedExercise?.target_sets ?? activeSets.length} sets x{" "}
-                        {activePlannedExercise?.target_reps ?? "-"} reps @ {activePlannedExercise?.target_weight ?? "-"} kg
+                        Cel: {activePlannedExercise?.target_sets ?? activeSets.length} serii x{" "}
+                        {activePlannedExercise?.target_reps ?? "-"} powt. @ {activePlannedExercise?.target_weight ?? "-"} kg
                       </span>
                     </div>
                     <button
@@ -232,19 +232,19 @@ export function SessionDetailView({
                       onClick={() => onApplyPrevious(activeExercise)}
                       disabled={session.status !== "IN_PROGRESS" || loading}
                     >
-                      Use Previous Values
+                      Użyj poprzednich wartości
                     </button>
                   </div>
 
                   {activePrevious?.suggested_weight != null && (
                     <div className="previous-values-note">
-                      Previous: {activePrevious.suggested_weight} kg x {activePrevious.suggested_reps}
+                      Poprzednio: {activePrevious.suggested_weight} kg x {activePrevious.suggested_reps}
                     </div>
                   )}
 
                   <div className="workout-set-list">
                     {activeSets.length === 0 && (
-                      <div className="empty-state inline-empty">No sets added yet. Add an extra working set below.</div>
+                      <div className="empty-state inline-empty">Nie dodano jeszcze serii. Dodaj poniżej dodatkową serię roboczą.</div>
                     )}
 
                     {activeSets.map((set, index) => {
@@ -264,20 +264,20 @@ export function SessionDetailView({
                           ].join(" ")}
                         >
                           <div className="set-number-block">
-                            <span>Set</span>
+                            <span>Seria</span>
                             <strong>{set.set_number}</strong>
                           </div>
                           <div className="suggested-block">
-                            <span>Suggested</span>
+                            <span>Sugestia</span>
                             <strong>
                               {suggestedWeight ?? "-"} x {suggestedReps ?? "-"}
                             </strong>
-                            {edited && <small>Changed</small>}
+                            {edited && <small>Zmieniono</small>}
                           </div>
                           <label>
                             <span>Kg</span>
                             <input
-                              aria-label={`${activeExercise.exercise.name} set ${set.set_number} weight`}
+                              aria-label={`${activeExercise.exercise.name} seria ${set.set_number} ciężar`}
                               inputMode="decimal"
                               value={values.weight}
                               onChange={(event) => onSetEditChange(activeExercise.id, index, "weight", event.target.value, values)}
@@ -285,9 +285,9 @@ export function SessionDetailView({
                             />
                           </label>
                           <label>
-                            <span>Reps</span>
+                            <span>Powt.</span>
                             <input
-                              aria-label={`${activeExercise.exercise.name} set ${set.set_number} reps`}
+                              aria-label={`${activeExercise.exercise.name} seria ${set.set_number} powtórzenia`}
                               inputMode="numeric"
                               value={values.reps}
                               onChange={(event) => onSetEditChange(activeExercise.id, index, "reps", event.target.value, values)}
@@ -300,7 +300,7 @@ export function SessionDetailView({
                             onClick={() => onCompleteSet(activeExercise, index, set, values)}
                             disabled={loading || session.status !== "IN_PROGRESS"}
                           >
-                            {set.completed ? "Saved" : "Done"}
+                            {set.completed ? "Zapisano" : "Zapisz"}
                           </button>
                         </div>
                       );
@@ -309,23 +309,23 @@ export function SessionDetailView({
 
                   <div className="workout-step-actions">
                     <button className="dark-action" type="button" onClick={onNextExercise} disabled={!hasNextExercise}>
-                      Next Exercise
+                      Następne ćwiczenie
                     </button>
-                    <span>{restRemaining > 0 ? `Rest ${formatTimer(restRemaining)}` : "Ready for next set"}</span>
+                    <span>{restRemaining > 0 ? `Przerwa ${formatTimer(restRemaining)}` : "Gotowe do następnej serii"}</span>
                   </div>
 
                   {session.status === "IN_PROGRESS" && (
                     <details className="extra-set-details">
-                      <summary>Add extra set</summary>
+                      <summary>Dodaj dodatkową serię</summary>
                       <form className="extra-set-form" onSubmit={onSaveManualSet}>
                         {activePlannedExercise && (
                           <button type="button" className="ghost-action" onClick={() => onUsePlannedTarget(activePlannedExercise)}>
-                            Use target
+                            Użyj celu
                           </button>
                         )}
                         {suggestion?.suggested_weight != null && suggestion.suggested_reps != null && (
                           <button type="button" className="ghost-action" onClick={onUseSuggestion}>
-                            Use last
+                            Użyj ostatnich
                           </button>
                         )}
                         <label>
@@ -338,7 +338,7 @@ export function SessionDetailView({
                           />
                         </label>
                         <label>
-                          <span>Reps</span>
+                          <span>Powt.</span>
                           <input
                             inputMode="numeric"
                             value={draft.reps}
@@ -356,15 +356,15 @@ export function SessionDetailView({
                           />
                         </label>
                         <button className="primary-action" type="submit" disabled={loading}>
-                          Add Set
+                          Dodaj serię
                         </button>
                       </form>
                     </details>
                   )}
                 </article>
 
-                <aside className="exercise-queue" aria-label="Workout exercises">
-                  <p className="eyebrow">Exercise Queue</p>
+                <aside className="exercise-queue" aria-label="Ćwiczenia w treningu">
+                  <p className="eyebrow">Kolejka ćwiczeń</p>
                   {session.exercises.map((item) => {
                     const completed = item.sets.filter((set) => set.completed).length;
                     const total = item.sets.length;
@@ -378,7 +378,7 @@ export function SessionDetailView({
                       >
                         <strong>{item.exercise.name}</strong>
                         <span>
-                          {completed}/{total} sets
+                          {completed}/{total} serii
                         </span>
                       </button>
                     );
@@ -391,11 +391,11 @@ export function SessionDetailView({
 
         {summary && (
           <section className="summary-band">
-            <h2>Workout summary</h2>
+            <h2>Podsumowanie treningu</h2>
             <div>
-              <span>{summary.completed_sets} completed sets</span>
-              <strong>{Math.round(summary.tonnage)} kg tonnage</strong>
-              <span>{summary.duration_seconds == null ? "Duration -" : `Duration ${formatTimer(summary.duration_seconds)}`}</span>
+              <span>{summary.completed_sets} ukończonych serii</span>
+              <strong>{Math.round(summary.tonnage)} kg objętości</strong>
+              <span>{summary.duration_seconds == null ? "Czas -" : `Czas ${formatTimer(summary.duration_seconds)}`}</span>
             </div>
           </section>
         )}

@@ -5,23 +5,41 @@ from app.models import Exercise, PlannedExercise, PlannedSession, User, UserRole
 
 
 EXERCISES = [
-    ("Bench Press", "Strength", "Chest", "https://exrx.net/WeightExercises/PectoralSternal/BBBenchPress"),
-    ("Back Squat", "Strength", "Legs", "https://exrx.net/WeightExercises/Quadriceps/BBSquat"),
-    ("Deadlift", "Strength", "Posterior chain", "https://exrx.net/WeightExercises/ErectorSpinae/BBDeadlift"),
-    ("Overhead Press", "Strength", "Shoulders", "https://exrx.net/WeightExercises/DeltoidAnterior/BBMilitaryPress"),
-    ("Pull-up", "Strength", "Back", "https://exrx.net/WeightExercises/LatissimusDorsi/BWPullup"),
-    ("Barbell Row", "Strength", "Back", "https://exrx.net/WeightExercises/BackGeneral/BBBentOverRow"),
+    ("Wyciskanie leżąc", "Siła", "Klatka piersiowa", "https://exrx.net/WeightExercises/PectoralSternal/BBBenchPress"),
+    ("Przysiad ze sztangą", "Siła", "Nogi", "https://exrx.net/WeightExercises/Quadriceps/BBSquat"),
+    ("Martwy ciąg", "Siła", "Tylny łańcuch", "https://exrx.net/WeightExercises/ErectorSpinae/BBDeadlift"),
+    ("Wyciskanie nad głowę", "Siła", "Barki", "https://exrx.net/WeightExercises/DeltoidAnterior/BBMilitaryPress"),
+    ("Podciąganie", "Siła", "Plecy", "https://exrx.net/WeightExercises/LatissimusDorsi/BWPullup"),
+    ("Wiosłowanie sztangą", "Siła", "Plecy", "https://exrx.net/WeightExercises/BackGeneral/BBBentOverRow"),
 ]
+
+OLD_EXERCISE_NAMES_BY_URL = {
+    "https://exrx.net/WeightExercises/PectoralSternal/BBBenchPress": "Bench Press",
+    "https://exrx.net/WeightExercises/Quadriceps/BBSquat": "Back Squat",
+    "https://exrx.net/WeightExercises/ErectorSpinae/BBDeadlift": "Deadlift",
+    "https://exrx.net/WeightExercises/DeltoidAnterior/BBMilitaryPress": "Overhead Press",
+    "https://exrx.net/WeightExercises/LatissimusDorsi/BWPullup": "Pull-up",
+    "https://exrx.net/WeightExercises/BackGeneral/BBBentOverRow": "Barbell Row",
+}
+
+PLAN_NAME = "Baza hipertrofii"
+OLD_PLAN_NAME = "Hypertrophy Base Split"
 
 
 def seed_demo_data(db: Session) -> None:
     athlete = db.get(User, 1)
     if athlete is None:
-        db.add(User(id=1, email="athlete@hipertrof.local", name="Demo Athlete", role=UserRole.ATHLETE))
+        db.add(User(id=1, email="athlete@hipertrof.local", name="Zawodnik demo", role=UserRole.ATHLETE))
 
-    existing = set(db.scalars(select(Exercise.name)).all())
+    existing_by_name = {exercise.name: exercise for exercise in db.scalars(select(Exercise)).all()}
+    existing_by_url = {
+        exercise.technique_url: exercise
+        for exercise in existing_by_name.values()
+        if exercise.technique_url is not None
+    }
     for name, category, muscle_group, technique_url in EXERCISES:
-        if name not in existing:
+        exercise = existing_by_name.get(name) or existing_by_url.get(technique_url)
+        if exercise is None:
             db.add(
                 Exercise(
                     name=name,
@@ -30,45 +48,55 @@ def seed_demo_data(db: Session) -> None:
                     technique_url=technique_url,
                 )
             )
+            continue
+
+        exercise.name = name
+        exercise.category = category
+        exercise.muscle_group = muscle_group
+        exercise.technique_url = technique_url
     db.commit()
 
     exercise_by_name = {exercise.name: exercise for exercise in db.scalars(select(Exercise)).all()}
-    existing_plan = db.scalar(select(WorkoutPlan).where(WorkoutPlan.name == "Hypertrophy Base Split"))
+    existing_plan = db.scalar(select(WorkoutPlan).where(WorkoutPlan.name.in_([PLAN_NAME, OLD_PLAN_NAME])))
     if existing_plan is not None:
+        existing_plan.name = PLAN_NAME
+        existing_plan.description = "Prosty trzydniowy split z jasnymi celami serii, powtórzeń i ciężaru startowego."
+        update_existing_plan(existing_plan)
+        db.commit()
         return
 
     plan = WorkoutPlan(
         owner_id=1,
         assigned_athlete_id=1,
-        name="Hypertrophy Base Split",
-        description="Simple three-day split with clear target sets, reps, and starting weights.",
+        name=PLAN_NAME,
+        description="Prosty trzydniowy split z jasnymi celami serii, powtórzeń i ciężaru startowego.",
     )
     db.add(plan)
     db.flush()
 
     plan_sessions = [
         (
-            "Leg Day",
+            "Dzień nóg",
             1,
             [
-                ("Back Squat", 4, 8, 90.0, "Controlled descent, strong brace."),
-                ("Deadlift", 3, 5, 120.0, "Leave one rep in reserve."),
+                ("Przysiad ze sztangą", 4, 8, 90.0, "Kontrolowane zejście, mocne napięcie tułowia."),
+                ("Martwy ciąg", 3, 5, 120.0, "Zostaw jedno powtórzenie w zapasie."),
             ],
         ),
         (
-            "Chest Day",
+            "Dzień klatki",
             2,
             [
-                ("Bench Press", 4, 8, 75.0, "Pause the first rep of each set."),
-                ("Overhead Press", 3, 8, 42.5, "Keep ribs down."),
+                ("Wyciskanie leżąc", 4, 8, 75.0, "Zatrzymaj pierwsze powtórzenie w każdej serii."),
+                ("Wyciskanie nad głowę", 3, 8, 42.5, "Trzymaj żebra nisko."),
             ],
         ),
         (
-            "Arm Day",
+            "Dzień pleców i ramion",
             3,
             [
-                ("Pull-up", 4, 8, 0.0, "Use bodyweight or assistance as needed."),
-                ("Barbell Row", 3, 10, 65.0, "Drive elbows back."),
+                ("Podciąganie", 4, 8, 0.0, "Użyj masy ciała albo asysty, jeśli jej potrzebujesz."),
+                ("Wiosłowanie sztangą", 3, 10, 65.0, "Prowadź łokcie mocno do tyłu."),
             ],
         ),
     ]
@@ -90,3 +118,26 @@ def seed_demo_data(db: Session) -> None:
                 )
             )
     db.commit()
+
+
+def update_existing_plan(plan: WorkoutPlan) -> None:
+    session_names = {
+        1: "Dzień nóg",
+        2: "Dzień klatki",
+        3: "Dzień pleców i ramion",
+    }
+    exercise_notes = {
+        "Przysiad ze sztangą": "Kontrolowane zejście, mocne napięcie tułowia.",
+        "Martwy ciąg": "Zostaw jedno powtórzenie w zapasie.",
+        "Wyciskanie leżąc": "Zatrzymaj pierwsze powtórzenie w każdej serii.",
+        "Wyciskanie nad głowę": "Trzymaj żebra nisko.",
+        "Podciąganie": "Użyj masy ciała albo asysty, jeśli jej potrzebujesz.",
+        "Wiosłowanie sztangą": "Prowadź łokcie mocno do tyłu.",
+    }
+    for session in plan.sessions:
+        session.name = session_names.get(session.order_index, session.name)
+        for planned_exercise in session.exercises:
+            old_name = OLD_EXERCISE_NAMES_BY_URL.get(planned_exercise.exercise.technique_url or "")
+            note = exercise_notes.get(planned_exercise.exercise.name) or exercise_notes.get(old_name or "")
+            if note is not None:
+                planned_exercise.notes = note

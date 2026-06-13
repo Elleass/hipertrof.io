@@ -1,6 +1,6 @@
-import { WorkoutHistoryItem, WorkoutSession } from "../api";
-import { formatTimer } from "../types";
-import { Sidebar } from "./Sidebar";
+import { WorkoutHistoryItem, WorkoutSession } from "../shared/api/client";
+import { Sidebar } from "../shared/components/Sidebar";
+import { formatTimer, formatWorkoutStatus } from "../shared/utils/workout";
 
 type HistoryViewProps = {
   history: WorkoutHistoryItem[];
@@ -16,7 +16,7 @@ type HistoryViewProps = {
 
 function formatDate(value: string | null | undefined): string {
   if (!value) return "-";
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat("pl-PL", {
     day: "2-digit",
     month: "short",
     hour: "2-digit",
@@ -67,14 +67,14 @@ export function HistoryView({
       <section className="dashboard-content">
         <header className="content-header">
           <div>
-            <p className="eyebrow">Training History</p>
-            <h2>Completed workouts</h2>
-            <span>Review finished sessions, set details, tonnage, and duration.</span>
+            <p className="eyebrow">Historia treningów</p>
+            <h2>Ukończone treningi</h2>
+            <span>Przeglądaj zakończone sesje, szczegóły serii, objętość i czas trwania.</span>
           </div>
         </header>
 
         {history.length === 0 ? (
-          <div className="empty-state">Completed workouts will appear here after finishing a session.</div>
+          <div className="empty-state">Ukończone treningi pojawią się tutaj po zakończeniu sesji.</div>
         ) : (
           <section className="history-layout">
             <div className="history-list">
@@ -82,8 +82,8 @@ export function HistoryView({
                 <button key={item.id} className="history-row" type="button" onClick={() => onOpenHistoryItem(item)}>
                   <span>{formatDate(item.completed_at)}</span>
                   <strong>{item.session_name}</strong>
-                  <small>{item.status}</small>
-                  <small>{item.completed_sets} sets</small>
+                  <small>{formatWorkoutStatus(item.status)}</small>
+                  <small>{item.completed_sets} serii</small>
                   <small>{Math.round(item.tonnage)} kg</small>
                   <small>{item.duration_seconds == null ? "-" : formatTimer(item.duration_seconds)}</small>
                 </button>
@@ -92,20 +92,20 @@ export function HistoryView({
 
             <div className="history-detail">
               {!selectedWorkout ? (
-                <div className="empty-state">Choose a completed workout to inspect its sets.</div>
+                <div className="empty-state">Wybierz ukończony trening, żeby sprawdzić jego serie.</div>
               ) : (
                 <>
                   <div className="history-detail-header">
                     <div>
-                      <p className="eyebrow">Workout Detail</p>
-                      <h3>{selectedWorkout.notes ?? "Completed workout"}</h3>
+                      <p className="eyebrow">Szczegóły treningu</p>
+                      <h3>{selectedWorkout.notes ?? "Ukończony trening"}</h3>
                       <div className="history-detail-metrics">
-                        <span>{detailCompletedSets} completed sets</span>
-                        <span>{Math.round(detailTonnage)} kg tonnage</span>
-                        <span>{detailDuration == null ? "Duration -" : formatTimer(detailDuration)}</span>
+                        <span>{detailCompletedSets} ukończonych serii</span>
+                        <span>{Math.round(detailTonnage)} kg objętości</span>
+                        <span>{detailDuration == null ? "Czas -" : formatTimer(detailDuration)}</span>
                       </div>
                     </div>
-                    <span>{selectedWorkout.status}</span>
+                    <span>{formatWorkoutStatus(selectedWorkout.status)}</span>
                   </div>
 
                   <div className="session-exercises">
@@ -114,24 +114,24 @@ export function HistoryView({
                         <div className="exercise-panel-header static-header">
                           <span>
                             <strong>{exercise.exercise.name}</strong>
-                            <small>{exercise.sets.length} logged sets</small>
+                            <small>{exercise.sets.length} zapisanych serii</small>
                           </span>
                         </div>
                         <div className="set-table">
                           <div className="set-table-head">
-                            <span>Set</span>
+                            <span>Seria</span>
                             <span>Status</span>
                             <span>Kg</span>
-                            <span>Reps</span>
-                            <span>Done</span>
+                            <span>Powt.</span>
+                            <span>Gotowe</span>
                           </div>
                           {exercise.sets.map((set) => (
                             <div key={set.id} className={set.completed ? "set-table-row completed" : "set-table-row"}>
                               <span>{set.set_number}</span>
-                              <span>{set.completed ? "Completed" : "Skipped"}</span>
+                              <span>{set.completed ? "Ukończona" : "Pominięta"}</span>
                               <span>{set.weight}</span>
                               <span>{set.reps}</span>
-                              <span>{set.completed ? "Done" : "-"}</span>
+                              <span>{set.completed ? "Tak" : "-"}</span>
                             </div>
                           ))}
                         </div>

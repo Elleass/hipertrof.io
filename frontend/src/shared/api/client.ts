@@ -116,7 +116,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
   if (!response.ok) {
     const body = await response.json().catch(() => ({ detail: response.statusText }));
-    throw new Error(body.detail ?? "Request failed");
+    throw new Error(body.detail ?? "Żądanie nie powiodło się");
   }
 
   return response.json() as Promise<T>;
@@ -131,7 +131,7 @@ export const api = {
   startWorkout: (payload?: { notes?: string; plan_id?: number; planned_session_id?: number }) =>
     request<WorkoutSession>("/workout-sessions/start", {
       method: "POST",
-      body: JSON.stringify(payload ?? { notes: "Ad-hoc strength workout" }),
+      body: JSON.stringify(payload ?? { notes: "Trening siłowy ad hoc" }),
     }),
   activeWorkout: (plannedSessionId?: number) => {
     const query = plannedSessionId == null ? "" : `?planned_session_id=${plannedSessionId}`;

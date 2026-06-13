@@ -36,7 +36,7 @@ def get_session_for_athlete(db: Session, session_id: int) -> models.WorkoutSessi
         )
     )
     if session is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workout session not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono sesji treningowej")
     return session
 
 
@@ -130,7 +130,7 @@ def start_session(db: Session, notes: str | None = None, plan_id: int | None = N
             .options(selectinload(models.PlannedSession.exercises))
         )
         if planned_session is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Planned session not found")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono zaplanowanej sesji")
         plan_id = planned_session.plan_id
         planned_exercises = list(planned_session.exercises)
 
@@ -172,11 +172,11 @@ def start_session(db: Session, notes: str | None = None, plan_id: int | None = N
 def add_exercise(db: Session, session_id: int, exercise_id: int) -> models.WorkoutExercise:
     session = get_session_for_athlete(db, session_id)
     if session.status != models.WorkoutStatus.IN_PROGRESS:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only in-progress sessions can be edited")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Można edytować tylko sesje w trakcie")
 
     exercise = db.get(models.Exercise, exercise_id)
     if exercise is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Exercise not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono ćwiczenia")
 
     workout_exercise = models.WorkoutExercise(
         workout_session_id=session.id,
@@ -202,7 +202,7 @@ def get_workout_exercise_for_athlete(db: Session, workout_exercise_id: int) -> m
         )
     )
     if workout_exercise is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workout exercise not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono ćwiczenia w treningu")
     return workout_exercise
 
 
@@ -218,7 +218,7 @@ def add_set(db: Session, workout_exercise_id: int, payload: AddSetRequest) -> mo
         .options(selectinload(models.WorkoutExercise.sets))
     )
     if workout_exercise is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workout exercise not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono ćwiczenia w treningu")
 
     workout_set = models.WorkoutSet(
         workout_exercise_id=workout_exercise.id,
@@ -247,7 +247,7 @@ def update_set(db: Session, workout_set_id: int, payload: UpdateSetRequest) -> m
         )
     )
     if workout_set is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workout set not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono serii treningowej")
 
     if payload.weight is not None:
         workout_set.weight = payload.weight
@@ -271,7 +271,7 @@ def complete_session(db: Session, session_id: int) -> WorkoutSummary:
     if not session.exercises or not completed_sets:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="A completed workout needs at least one exercise and one completed set",
+            detail="Ukończony trening musi zawierać co najmniej jedno ćwiczenie i jedną ukończoną serię",
         )
 
     session.status = models.WorkoutStatus.COMPLETED
@@ -327,7 +327,7 @@ def workout_history(db: Session) -> list[WorkoutHistoryItem]:
                 id=session.id,
                 plan_id=session.plan_id,
                 planned_session_id=session.planned_session_id,
-                session_name=planned_session_names.get(session.planned_session_id or 0, session.notes or "Completed workout"),
+                session_name=planned_session_names.get(session.planned_session_id or 0, session.notes or "Ukończony trening"),
                 status=session.status,
                 started_at=session.started_at,
                 completed_at=session.completed_at,
@@ -411,11 +411,11 @@ def statistics_summary(db: Session) -> StatisticsSummary:
 
     achievements = []
     if completed_workouts >= 1:
-        achievements.append("First completed workout")
+        achievements.append("Pierwszy ukończony trening")
     if completed_workouts >= 10:
-        achievements.append("10 completed workouts")
+        achievements.append("10 ukończonych treningów")
     if total_tonnage >= 10000:
-        achievements.append("10,000 kg total tonnage")
+        achievements.append("10 000 kg objętości treningowej")
 
     return StatisticsSummary(
         completed_workouts=completed_workouts,

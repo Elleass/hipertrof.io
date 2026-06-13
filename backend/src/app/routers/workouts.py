@@ -98,7 +98,7 @@ def workout_history_detail(session_id: int, db: Session = Depends(get_db)) -> mo
     if session.status != models.WorkoutStatus.COMPLETED:
         from fastapi import HTTPException, status
 
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Completed workout not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono ukończonego treningu")
     return session
 
 

@@ -53,24 +53,24 @@ export function PlanDetailView({
 
       <section className="dashboard-content">
         {!plan ? (
-          <div className="empty-state">Training plan was not found.</div>
+          <div className="empty-state">Nie znaleziono planu treningowego.</div>
         ) : (
           <>
             <header className="content-header">
               <div>
-                <p className="eyebrow">Training Plans / Selected Plan</p>
+                <p className="eyebrow">Plany treningowe / Wybrany plan</p>
                 <h2>{plan.name}</h2>
                 <span>{plan.description}</span>
               </div>
               <button className="dark-action" type="button" onClick={onToggleEditing}>
-                {editing ? "Close Edit" : "Edit Plan"}
+                {editing ? "Zamknij edycję" : "Edytuj plan"}
               </button>
             </header>
 
             {editing && (
               <div className="edit-panel">
-                <strong>Edit planned targets</strong>
-                <span>Update sets, reps, and kg for exercises already assigned to this plan.</span>
+                <strong>Edytuj założenia planu</strong>
+                <span>Zmień liczbę serii, powtórzeń i kilogramy dla ćwiczeń przypisanych do tego planu.</span>
               </div>
             )}
 
@@ -78,7 +78,7 @@ export function PlanDetailView({
               {plan.sessions.map((plannedSession) => (
                 <article key={plannedSession.id} className="session-card">
                   <div className="card-topline">
-                    <span>Session {plannedSession.order_index}</span>
+                    <span>Sesja {plannedSession.order_index}</span>
                     <small>{plannedSession.exercises.length}</small>
                   </div>
                   <h3>{plannedSession.name}</h3>
@@ -87,18 +87,18 @@ export function PlanDetailView({
                       editing ? (
                         <form key={target.id} className="target-edit-row" onSubmit={(event) => saveTarget(event, target)}>
                           <strong>{target.exercise.name}</strong>
-                          <input name="target_sets" type="number" min="1" defaultValue={target.target_sets ?? 1} aria-label={`${target.exercise.name} sets`} />
-                          <input name="target_reps" type="number" min="1" defaultValue={target.target_reps ?? 1} aria-label={`${target.exercise.name} reps`} />
+                          <input name="target_sets" type="number" min="1" defaultValue={target.target_sets ?? 1} aria-label={`${target.exercise.name} serie`} />
+                          <input name="target_reps" type="number" min="1" defaultValue={target.target_reps ?? 1} aria-label={`${target.exercise.name} powtórzenia`} />
                           <input
                             name="target_weight"
                             type="number"
                             min="0"
                             step="0.5"
                             defaultValue={target.target_weight ?? 0}
-                            aria-label={`${target.exercise.name} weight`}
+                            aria-label={`${target.exercise.name} ciężar`}
                           />
                           <button className="ghost-action" type="submit">
-                            Save
+                            Zapisz
                           </button>
                         </form>
                       ) : (
@@ -109,7 +109,7 @@ export function PlanDetailView({
                     )}
                   </div>
                   <button className="secondary-action" type="button" onClick={() => onOpenSession(plan, plannedSession)}>
-                    Open Session
+                    Otwórz sesję
                   </button>
                 </article>
               ))}

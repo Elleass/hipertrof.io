@@ -61,7 +61,7 @@ export function useWorkoutSession({
         if (activeSession) {
           hydrateWorkoutSession(activeSession, selectedPlannedSession);
           setSummary(null);
-          setStatusMessage("Active workout restored");
+          setStatusMessage("Przywrócono aktywny trening");
           return;
         }
 
@@ -69,7 +69,7 @@ export function useWorkoutSession({
           current?.planned_session_id === routePlannedSessionId && current.status === "IN_PROGRESS" ? null : current,
         );
       })
-      .catch((err) => setError(err instanceof Error ? err.message : "Could not restore active workout"));
+      .catch((err) => setError(err instanceof Error ? err.message : "Nie udało się przywrócić aktywnego treningu"));
 
     return () => {
       cancelled = true;
@@ -141,9 +141,9 @@ export function useWorkoutSession({
       const nextSession = await api.startWorkout();
       hydrateWorkoutSession(nextSession);
       setSelectedWorkoutExerciseId(null);
-      setStatusMessage("Workout started");
+      setStatusMessage("Trening rozpoczęty");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not start workout");
+      setError(err instanceof Error ? err.message : "Nie udało się rozpocząć treningu");
     } finally {
       setLoading(false);
     }
@@ -161,9 +161,9 @@ export function useWorkoutSession({
         planned_session_id: plannedSession.id,
       });
       hydrateWorkoutSession(nextSession, plannedSession);
-      setStatusMessage("Workout started");
+      setStatusMessage("Trening rozpoczęty");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not start planned workout");
+      setError(err instanceof Error ? err.message : "Nie udało się rozpocząć zaplanowanego treningu");
     } finally {
       setLoading(false);
     }
@@ -197,12 +197,12 @@ export function useWorkoutSession({
         reps: smart.suggested_reps?.toString() ?? "",
         rpe: "",
       });
-      setStatusMessage("Exercise added");
+      setStatusMessage("Ćwiczenie dodane");
       if (!updated.exercises.some((item) => item.id === workoutExercise.id)) {
         setSession({ ...updated, exercises: [...updated.exercises, workoutExercise] });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not add exercise");
+      setError(err instanceof Error ? err.message : "Nie udało się dodać ćwiczenia");
     } finally {
       setLoading(false);
     }
@@ -223,7 +223,7 @@ export function useWorkoutSession({
     try {
       const smart = await loadPreviousForExercise(item.exercise.id);
       if (smart.suggested_sets.length === 0 && (smart.suggested_weight == null || smart.suggested_reps == null)) {
-        setError("No previous values found for this exercise");
+        setError("Nie znaleziono poprzednich wartości dla tego ćwiczenia");
         return;
       }
 
@@ -243,9 +243,9 @@ export function useWorkoutSession({
       }
       setPreviousByExercise((current) => ({ ...current, [item.exercise.id]: smart }));
       setSetEdits((current) => ({ ...current, ...nextEdits }));
-      setStatusMessage("Previous values applied");
+      setStatusMessage("Zastosowano poprzednie wartości");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not load previous exercise values");
+      setError(err instanceof Error ? err.message : "Nie udało się wczytać poprzednich wartości ćwiczenia");
     }
   }
 
@@ -270,7 +270,7 @@ export function useWorkoutSession({
         reps: target?.target_reps?.toString() ?? "",
         rpe: "",
       });
-      setError(err instanceof Error ? err.message : "Could not load exercise suggestion");
+      setError(err instanceof Error ? err.message : "Nie udało się wczytać sugestii dla ćwiczenia");
     }
   }
 
@@ -289,7 +289,7 @@ export function useWorkoutSession({
     const reps = Number(draft.reps);
     const rpe = draft.rpe ? Number(draft.rpe) : null;
     if (!Number.isFinite(weight) || !Number.isFinite(reps) || reps < 1) {
-      setError("Enter a valid weight and reps count");
+      setError("Podaj prawidłowy ciężar i liczbę powtórzeń");
       return;
     }
 
@@ -298,25 +298,25 @@ export function useWorkoutSession({
 
   async function completeEditedSet(item: WorkoutExercise, index: number, existingSet: WorkoutSet | undefined, values: SetEdit) {
     if (session?.status !== "IN_PROGRESS") {
-      setError("Completed workouts cannot be edited");
+      setError("Ukończonych treningów nie można edytować");
       return;
     }
 
     if (!existingSet) {
-      setError("Planned set is not available yet. Start the session again to restore planned sets.");
+      setError("Zaplanowana seria nie jest jeszcze dostępna. Uruchom sesję ponownie, żeby odtworzyć planowane serie.");
       return;
     }
 
     const weight = Number(values.weight);
     const reps = Number(values.reps);
     if (!Number.isFinite(weight) || !Number.isFinite(reps) || reps < 1) {
-      setError("Enter a valid weight and reps count");
+      setError("Podaj prawidłowy ciężar i liczbę powtórzeń");
       return;
     }
 
     if (await updateExistingSet(existingSet.id, weight, reps, true)) {
       clearSetEdit(item.id, index);
-      setStatusMessage(`Set ${existingSet.set_number} saved`);
+      setStatusMessage(`Seria ${existingSet.set_number} zapisana`);
     }
     setSelectedWorkoutExerciseId(item.id);
   }
@@ -331,10 +331,10 @@ export function useWorkoutSession({
       await refreshSession(session.id);
       setDraft({ weight: weight.toString(), reps: reps.toString(), rpe: "" });
       startRestTimer();
-      setStatusMessage("Extra set saved");
+      setStatusMessage("Dodatkowa seria zapisana");
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not save set");
+      setError(err instanceof Error ? err.message : "Nie udało się zapisać serii");
       return false;
     } finally {
       setLoading(false);
@@ -352,7 +352,7 @@ export function useWorkoutSession({
       startRestTimer();
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not update set");
+      setError(err instanceof Error ? err.message : "Nie udało się zaktualizować serii");
       return false;
     } finally {
       setLoading(false);
@@ -399,10 +399,10 @@ export function useWorkoutSession({
       setSummary(completed);
       setSession(completed.session);
       clearRestTimer();
-      setStatusMessage("Workout finished");
+      setStatusMessage("Trening zakończony");
       await onWorkoutCompleted();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not complete workout");
+      setError(err instanceof Error ? err.message : "Nie udało się zakończyć treningu");
     } finally {
       setLoading(false);
     }
