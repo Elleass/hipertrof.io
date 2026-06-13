@@ -11,7 +11,6 @@
   - [1.1. Kontekst projektu i zrozumienie potrzeb klienta](#11-kontekst-projektu-i-zrozumienie-potrzeb-klienta)
   - [1.2. Model opisowy systemu](#12-model-opisowy-systemu)
   - [1.3. Analiza rynku i istniejących rozwiązań](#13-analiza-rynku-i-istniejących-rozwiązań)
-  - [1.4. Motywacja i główny przypadek użycia](#14-motywacja-i-główny-przypadek-użycia)
 - [2. Aktorzy systemu](#2-aktorzy-systemu)
 - [3. Model statyczny i zachowanie systemu](#3-model-statyczny-i-zachowanie-systemu)
   - [3.1. Diagram kontekstu C4 — poziom 1](#31-diagram-kontekstu-c4--poziom-1)
@@ -31,7 +30,11 @@
 
 # 1. Wprowadzenie, analiza rynku i motywacja
 
+Rozdział wprowadza temat projektu, opisuje podstawowe potrzeby klienta oraz pokazuje, dlaczego system jest potrzebny na tle istniejących aplikacji treningowych. Zawiera też model opisowy, który stanowi punkt wyjścia dla późniejszej identyfikacji aktorów, przypadków użycia i wymagań.
+
 ## 1.1. Kontekst projektu i zrozumienie potrzeb klienta
+
+Ta część przedstawia temat projektu oraz cele aplikacji z perspektywy klienta. Dzięki temu dalsze elementy dokumentacji odnoszą się do konkretnych potrzeb, a nie tylko do ogólnego pomysłu na aplikację.
 
 ### 1.1.1. Temat projektu
 
@@ -55,6 +58,8 @@ Z perspektywy klienta system ma realizować następujące cele:
 ---
 
 ## 1.2. Model opisowy systemu
+
+Model opisowy przedstawia działanie systemu językiem naturalnym. Opisuje najważniejsze obiekty, czynności użytkownika i reguły biznesowe, które później zostają przełożone na model przypadków użycia oraz model obiektowy.
 
 ### 1.2.1. Opis systemu w języku naturalnym
 
@@ -83,6 +88,8 @@ Trener może zaprosić sportowca do relacji trener–podopieczny. Po akceptacji 
 
 ## 1.3. Analiza rynku i istniejących rozwiązań
 
+Analiza rynku służy wskazaniu, czym projektowany system różni się od istniejących aplikacji. Najważniejszy wniosek dotyczy ograniczenia liczby interakcji podczas treningu, ponieważ właśnie ten problem jest szczególnie widoczny w konkurencyjnych rozwiązaniach.
+
 ### 1.3.1. Istniejące rozwiązania
 
 Na rynku istnieją aplikacje wspierające rejestrowanie treningów siłowych, m.in. Strong, Hevy, FitNotes i JEFIT. Oferują one rozbudowane bazy ćwiczeń, historię treningów i wykresy progresu. Ich głównym problemem z perspektywy projektowanego systemu jest jednak duża liczba interakcji wymaganych podczas treningu.
@@ -102,39 +109,11 @@ Na rynku istnieją aplikacje wspierające rejestrowanie treningów siłowych, m.
 4. Integracja cardio powinna być opcjonalna, ponieważ nie każdy użytkownik korzysta ze Stravy.
 5. Elementy społecznościowe i grywalizacja powinny być konfigurowalne, aby nie przeszkadzać użytkownikom trenującym indywidualnie.
 
----
-
-## 1.4. Motywacja i główny przypadek użycia
-
-### 1.4.1. Motywacja
+### 1.3.3. Uzasadnienie kierunku projektu
 
 Systematyczne zapisywanie treningów jest jednym z podstawowych warunków świadomego progresu. Użytkownik powinien wiedzieć, czy zwiększa ciężary, poprawia objętość treningową, utrzymuje regularność oraz czy jego tygodniowe obciążenie nie staje się zbyt wysokie. Papierowe dzienniki nie rozwiązują tego problemu kompleksowo, a istniejące aplikacje często wymagają zbyt wiele ręcznej obsługi.
 
-Projektowany system odpowiada na tę lukę przez połączenie trzech wartości:
-
-1. szybkiego logowania treningu,
-2. automatycznych podpowiedzi z historii,
-3. motywującej interpretacji danych.
-
-### 1.4.2. Główny przypadek użycia na najwyższym poziomie abstrakcji
-
-**UC-GŁÓWNY: Szybkie zarejestrowanie treningu siłowego**
-
-Aktor główny: Sportowiec  
-Cel: Zapisanie treningu przy minimalnej liczbie interakcji z ekranem.  
-Rezultat: Sesja zostaje zapisana, serie są utrwalone, objętość treningowa jest obliczona, a historia treningowa zaktualizowana.
-
-Ogólny przebieg:
-
-1. Sportowiec otwiera aplikację i wybiera trening z planu albo rozpoczyna sesję ad hoc.
-2. System pokazuje aktywną sesję i listę ćwiczeń.
-3. Sportowiec wybiera ćwiczenie.
-4. System pobiera ostatnie wykonanie tego ćwiczenia.
-5. System podpowiada ciężar i liczbę powtórzeń.
-6. Sportowiec zatwierdza serię jednym kliknięciem albo edytuje wartości.
-7. System zapisuje serię.
-8. Po wykonaniu treningu sportowiec kończy sesję.
-9. System oblicza objętość treningową i aktualizuje statystyki.
+Projektowany system odpowiada na tę lukę przez połączenie szybkiego logowania treningu, automatycznych podpowiedzi z historii i czytelnej interpretacji danych. Główny przypadek użycia można więc określić jako szybkie zarejestrowanie treningu siłowego: sportowiec rozpoczyna sesję, wykonuje ćwiczenia, zatwierdza lub edytuje serie, a system zapisuje trening i oblicza objętość treningową.
 
 ---
 
@@ -153,6 +132,8 @@ Poniżsi aktorzy wyznaczają granice odpowiedzialności systemu i porządkują p
 ---
 
 # 3. Model statyczny i zachowanie systemu
+
+Ten rozdział pokazuje, z jakich elementów składa się system oraz jak zmienia się stan najważniejszego obiektu biznesowego, czyli sesji treningowej. Diagramy statyczne opisują strukturę danych i komponentów, a diagram stanu uzupełnia je o zachowanie sesji w czasie.
 
 ## 3.1. Diagram kontekstu C4 — poziom 1
 
@@ -178,6 +159,8 @@ Diagram pokazuje granicę systemu oraz najważniejsze podmioty, które z nim wsp
 ---
 
 ## 3.2. Model statyczny: diagram klas i komponentów
+
+Model statyczny porządkuje główne klasy domenowe oraz komponenty aplikacji. Dzięki temu widać, w jaki sposób opisany wcześniej proces treningowy przekłada się na obiekty systemu i odpowiedzialności poszczególnych modułów.
 
 ### 3.2.1. Diagram klas
 
@@ -393,7 +376,11 @@ Diagram pokazuje cykl życia pojedynczej sesji treningowej: od zaplanowania, prz
 
 # 4. Dynamika systemu i wymagania
 
+Rozdział przekształca model opisowy w przypadki użycia, wymagania oraz diagramy interakcji. Największy nacisk położono na główny przepływ sportowca, ponieważ to on decyduje o wartości prototypu i całego systemu.
+
 ## 4.1. Przypadki użycia
+
+Przypadki użycia opisują, kto korzysta z systemu i jaki cel chce osiągnąć. Lista obejmuje pełny zakres docelowy, natomiast szczegółowo rozwinięto najważniejsze scenariusze związane z szybkim wykonaniem treningu.
 
 ### 4.1.1. Lista przypadków użycia
 
@@ -415,7 +402,57 @@ Diagram pokazuje cykl życia pojedynczej sesji treningowej: od zaplanowania, prz
 | UC-14 | Wysłanie powiadomienia o treningu | System czasu | niski |
 | UC-15 | Dodanie znajomego | Sportowiec | niski |
 
-### 4.1.2. UC-01 — Rozpoczęcie sesji treningowej
+### 4.1.2. Diagram czynności — główny przepływ treningowy
+
+```mermaid
+flowchart TB
+    Start((Start))
+    Dashboard["Otworzenie dashboardu"]
+    Plan{"Czy użytkownik wybiera plan?"}
+    SelectPlan["Wybór planu treningowego"]
+    AdHoc["Rozpoczęcie sesji ad hoc"]
+    Session["Ekran aktywnej sesji"]
+    Exercise["Wybór ćwiczenia"]
+    History{"Czy istnieje historia ćwiczenia?"}
+    Autofill["Smart Auto-fill\npodpowiada ciężar i powtórzenia"]
+    Manual["Ręczne wpisanie wartości"]
+    Decision{"Czy wartości wymagają zmiany?"}
+    Edit["Edycja ciężaru lub powtórzeń"]
+    SaveSet["Zapisanie serii"]
+    MoreSets{"Czy dodać kolejną serię?"}
+    MoreExercises{"Czy dodać kolejne ćwiczenie?"}
+    Finish["Zakończenie treningu"]
+    Summary["Obliczenie objętości treningowej\ni zapis podsumowania"]
+    End((Koniec))
+
+    Start --> Dashboard
+    Dashboard --> Plan
+    Plan -->|tak| SelectPlan
+    Plan -->|nie| AdHoc
+    SelectPlan --> Session
+    AdHoc --> Session
+    Session --> Exercise
+    Exercise --> History
+    History -->|tak| Autofill
+    History -->|nie| Manual
+    Autofill --> Decision
+    Manual --> SaveSet
+    Decision -->|tak| Edit
+    Decision -->|nie| SaveSet
+    Edit --> SaveSet
+    SaveSet --> MoreSets
+    MoreSets -->|tak| History
+    MoreSets -->|nie| MoreExercises
+    MoreExercises -->|tak| Exercise
+    MoreExercises -->|nie| Finish
+    Finish --> Summary
+    Summary --> End
+```
+
+**Rysunek 5. Diagram czynności głównego przepływu treningowego.**
+Diagram pokazuje czynności wykonywane przez sportowca podczas zapisywania treningu oraz decyzje podejmowane przez system. Najważniejszym momentem jest użycie Smart Auto-fill, które pozwala zatwierdzić serię bez ręcznego przepisywania danych, ale nadal umożliwia edycję wartości przed zapisem.
+
+### 4.1.3. UC-01 — Rozpoczęcie sesji treningowej
 
 | Pole | Opis |
 |---|---|
@@ -427,7 +464,7 @@ Diagram pokazuje cykl życia pojedynczej sesji treningowej: od zaplanowania, prz
 | Scenariusze alternatywne | A1: Brak planu — użytkownik rozpoczyna sesję ad hoc. A2: Sesja już trwa — system otwiera aktywną sesję zamiast tworzyć nową. |
 | Kryterium akceptacji | Użytkownik może przejść z dashboardu do aktywnej sesji i rozpocząć dodawanie ćwiczeń. |
 
-### 4.1.3. UC-02 — Dodanie ćwiczenia do sesji
+### 4.1.4. UC-02 — Dodanie ćwiczenia do sesji
 
 | Pole | Opis |
 |---|---|
@@ -439,7 +476,7 @@ Diagram pokazuje cykl życia pojedynczej sesji treningowej: od zaplanowania, prz
 | Scenariusze alternatywne | A1: Ćwiczenia nie ma w bibliotece — użytkownik tworzy własne ćwiczenie. A2: Brak historii — system nie pokazuje podpowiedzi. |
 | Kryterium akceptacji | Ćwiczenie pojawia się w aktywnej sesji i użytkownik może dodać serię. |
 
-### 4.1.4. UC-03 — Zatwierdzenie serii przez Smart Auto-fill
+### 4.1.5. UC-03 — Zatwierdzenie serii przez Smart Auto-fill
 
 | Pole | Opis |
 |---|---|
@@ -451,7 +488,7 @@ Diagram pokazuje cykl życia pojedynczej sesji treningowej: od zaplanowania, prz
 | Scenariusze alternatywne | A1: Użytkownik zmienia ciężar. A2: Użytkownik zmienia liczbę powtórzeń. A3: Użytkownik usuwa serię przed zapisem. |
 | Kryterium akceptacji | Przy istniejącej podpowiedzi użytkownik może zapisać serię maksymalnie w dwóch akcjach. |
 
-### 4.1.5. UC-04 — Edycja ciężaru i powtórzeń w aktywnej serii
+### 4.1.6. UC-04 — Edycja ciężaru i powtórzeń w aktywnej serii
 
 | Pole | Opis |
 |---|---|
@@ -463,7 +500,7 @@ Diagram pokazuje cykl życia pojedynczej sesji treningowej: od zaplanowania, prz
 | Scenariusze alternatywne | A1: Użytkownik przywraca poprzedni ciężar przyciskiem `Poprzedni ciężar`. A2: Użytkownik anuluje edycję. |
 | Kryterium akceptacji | Użytkownik może zmienić ciężar i powtórzenia bez opuszczania ekranu aktywnego treningu. |
 
-### 4.1.6. UC-05 — Użycie poprzedniego ciężaru
+### 4.1.7. UC-05 — Użycie poprzedniego ciężaru
 
 | Pole | Opis |
 |---|---|
@@ -474,7 +511,7 @@ Diagram pokazuje cykl życia pojedynczej sesji treningowej: od zaplanowania, prz
 | Scenariusz główny | 1. Użytkownik klika przycisk `Poprzedni ciężar`. 2. System pobiera ostatni ciężar dla ćwiczenia. 3. System wstawia wartość do aktywnej serii. |
 | Kryterium akceptacji | Przycisk działa bez ręcznego wpisywania wartości przez użytkownika. |
 
-### 4.1.7. UC-06 — Zakończenie sesji i obliczenie objętości treningowej
+### 4.1.8. UC-06 — Zakończenie sesji i obliczenie objętości treningowej
 
 | Pole | Opis |
 |---|---|
@@ -489,6 +526,8 @@ Diagram pokazuje cykl życia pojedynczej sesji treningowej: od zaplanowania, prz
 ---
 
 ## 4.2. Specyfikacja wymagań
+
+Wymagania wynikają z przypadków użycia oraz reguł biznesowych opisanych wcześniej. Priorytety pokazują, które funkcje są konieczne dla działania głównego przepływu, a które mogą zostać rozwinięte po prototypie.
 
 ### 4.2.1. Wymagania funkcjonalne
 
@@ -539,6 +578,8 @@ Diagram pokazuje cykl życia pojedynczej sesji treningowej: od zaplanowania, prz
 
 ## 4.3. Diagramy interakcji
 
+Diagramy interakcji pokazują wymianę komunikatów między użytkownikiem, frontendem, backendem i bazą danych. Uzupełniają diagram czynności, ponieważ pokazują nie tylko kolejność działań, ale też odpowiedzialność konkretnych części programu.
+
 ### 4.3.1. Diagram sekwencji — Smart Auto-fill i zapis serii
 
 ```mermaid
@@ -567,7 +608,7 @@ sequenceDiagram
     UI-->>S: pokazuje następną serię
 ```
 
-**Rysunek 5. Diagram sekwencji Smart Auto-fill i zapisu serii.**
+**Rysunek 6. Diagram sekwencji Smart Auto-fill i zapisu serii.**
 Diagram opisuje fragment aktywnego treningu, w którym sportowiec wybiera ćwiczenie, a system pobiera ostatnie zapisane wartości dla tego ćwiczenia. Następnie użytkownik zatwierdza lub edytuje podpowiedź, a backend zapisuje serię w bazie danych.
 
 ### 4.3.2. Diagram sekwencji — rozpoczęcie i zakończenie sesji
@@ -603,7 +644,7 @@ sequenceDiagram
     UI-->>S: wynik treningu
 ```
 
-**Rysunek 6. Diagram sekwencji rozpoczęcia i zakończenia sesji.**
+**Rysunek 7. Diagram sekwencji rozpoczęcia i zakończenia sesji.**
 Diagram przedstawia główny przepływ biznesowy aplikacji: utworzenie aktywnej sesji, wykonanie treningu i zapisanie zakończonej sesji. Pokazuje też moment obliczenia objętości treningowej oraz aktualizacji statystyk po zakończeniu treningu.
 
 
@@ -611,7 +652,11 @@ Diagram przedstawia główny przepływ biznesowy aplikacji: utworzenie aktywnej 
 
 # 5. Projekt architektury i struktury
 
+Rozdział opisuje techniczną organizację systemu oraz sposób wdrożenia jego głównych części. Architektura została przedstawiona tak, aby było widać powiązanie między interfejsem użytkownika, logiką biznesową, bazą danych i integracjami zewnętrznymi.
+
 ## 5.1. Model wdrożenia
+
+Model wdrożenia pokazuje fizyczne rozmieszczenie elementów systemu. Wyróżnia urządzenie użytkownika, serwer aplikacyjny, bazę danych oraz opcjonalne usługi wspierające.
 
 ### 5.1.1. Architektura fizyczna
 
@@ -648,7 +693,7 @@ flowchart TB
     Notif --> Push
 ```
 
-**Rysunek 7. Diagram wdrożenia systemu.**
+**Rysunek 8. Diagram wdrożenia systemu.**
 Diagram pokazuje fizyczny podział systemu na urządzenie użytkownika, serwer aplikacyjny, warstwę danych i systemy zewnętrzne. Frontend komunikuje się z backendem przez HTTPS, backend zapisuje dane w PostgreSQL oraz opcjonalnie komunikuje się ze Stravą i serwisem powiadomień.
 
 ### 5.1.2. Struktura trójwarstwowa
@@ -681,6 +726,8 @@ Poniższy stack jest referencyjną konfiguracją technologiczną systemu. Jeżel
 
 ## 5.2. Proponowany model danych
 
+Proponowany model danych odpowiada klasom domenowym pokazanym w modelu statycznym. Tabela wskazuje najważniejsze encje, ich pola oraz relacje potrzebne do obsługi planów, sesji, serii, statystyk i integracji dodatkowych.
+
 | Encja | Najważniejsze pola | Relacje |
 |---|---|---|
 | `users` | `id`, `email`, `password_hash`, `name`, `weight`, `height` | ma wiele planów, sesji, odznak |
@@ -701,11 +748,15 @@ Poniższy stack jest referencyjną konfiguracją technologiczną systemu. Jeżel
 
 # 6. Testowanie oprogramowania
 
+Rozdział opisuje sposób sprawdzania systemu na poziomie logiki biznesowej, integracji oraz użyteczności. Testy są powiązane z wymaganiami, dlatego szczególnie mocno obejmują rozpoczęcie sesji, zapis serii, Smart Auto-fill i zakończenie treningu.
+
 ## 6.1. Strategia testowania
 
 Testowanie systemu powinno obejmować weryfikację, czyli sprawdzenie zgodności z wymaganiami, oraz walidację, czyli sprawdzenie, czy system faktycznie rozwiązuje problem użytkownika. W przypadku tego projektu najważniejsza jest walidacja głównego przepływu treningowego: użytkownik powinien móc zapisać serię szybko, bez rozproszenia i bez zbędnych ekranów.
 
 ## 6.2. Typy testów
+
+Zakres testów obejmuje zarówno poprawność techniczną, jak i zgodność z głównym celem aplikacji. Oprócz testów jednostkowych i integracyjnych ważne są testy użyteczności, ponieważ liczba kliknięć w trakcie treningu jest jednym z kryteriów sukcesu systemu.
 
 | Typ testu | Zakres w projekcie |
 |---|---|
@@ -719,6 +770,8 @@ Testowanie systemu powinno obejmować weryfikację, czyli sprawdzenie zgodności
 | Testy użyteczności | liczba kliknięć, czytelność UI, obsługa jedną ręką |
 
 ## 6.3. Przypadki testowe
+
+Przypadki testowe opisują najważniejsze scenariusze weryfikujące wymagania funkcjonalne i niefunkcjonalne. Największy priorytet mają testy głównego przepływu treningowego, ponieważ to on jest podstawą prototypu.
 
 | ID | Nazwa testu | Typ | Warunki | Kroki | Oczekiwany rezultat |
 |---|---|---|---|---|---|
@@ -737,6 +790,8 @@ Testowanie systemu powinno obejmować weryfikację, czyli sprawdzenie zgodności
 ---
 
 # 7. Prototyp systemu
+
+Prototyp służy do praktycznego pokazania najważniejszego procesu biznesowego, a nie do pełnej implementacji wszystkich funkcji systemu. Jego zakres został ograniczony do elementów, które pozwalają sprawdzić szybkość i wygodę zapisywania treningu siłowego.
 
 ## 7.1. Cel prototypu
 
