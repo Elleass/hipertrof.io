@@ -45,6 +45,13 @@ export type PlannedExercise = {
   notes?: string | null;
 };
 
+export type PlannedExerciseUpdate = {
+  target_sets?: number;
+  target_reps?: number;
+  target_weight?: number;
+  notes?: string;
+};
+
 export type PlannedSession = {
   id: number;
   name: string;
@@ -65,6 +72,20 @@ export type WorkoutSummary = {
   session: WorkoutSession;
   tonnage: number;
   completed_sets: number;
+  duration_seconds?: number | null;
+};
+
+export type WorkoutHistoryItem = {
+  id: number;
+  plan_id?: number | null;
+  planned_session_id?: number | null;
+  session_name: string;
+  status: WorkoutSession["status"];
+  started_at: string;
+  completed_at?: string | null;
+  completed_sets: number;
+  tonnage: number;
+  duration_seconds?: number | null;
 };
 
 export type SmartAutofill = {
@@ -73,6 +94,11 @@ export type SmartAutofill = {
   suggested_reps?: number | null;
   source_session_id?: number | null;
   source_date?: string | null;
+  suggested_sets: {
+    set_number: number;
+    suggested_weight: number;
+    suggested_reps: number;
+  }[];
 };
 
 export type StatisticsSummary = {
@@ -98,6 +124,8 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
 export const api = {
   exercises: () => request<Exercise[]>("/exercises"),
+  history: () => request<WorkoutHistoryItem[]>("/history"),
+  historyDetail: (id: number) => request<WorkoutSession>(`/history/${id}`),
   plans: () => request<WorkoutPlan[]>("/plans"),
   stats: () => request<StatisticsSummary>("/statistics/summary"),
   startWorkout: (payload?: { notes?: string; plan_id?: number; planned_session_id?: number }) =>
@@ -105,11 +133,20 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload ?? { notes: "Ad-hoc strength workout" }),
     }),
+  activeWorkout: (plannedSessionId?: number) => {
+    const query = plannedSessionId == null ? "" : `?planned_session_id=${plannedSessionId}`;
+    return request<WorkoutSession | null>(`/workout-sessions/active${query}`);
+  },
   getWorkout: (id: number) => request<WorkoutSession>(`/workout-sessions/${id}`),
   addExercise: (sessionId: number, exerciseId: number) =>
     request<WorkoutExercise>(`/workout-sessions/${sessionId}/exercises`, {
       method: "POST",
       body: JSON.stringify({ exercise_id: exerciseId }),
+    }),
+  updatePlannedExercise: (plannedExerciseId: number, payload: PlannedExerciseUpdate) =>
+    request<PlannedExercise>(`/plans/planned-exercises/${plannedExerciseId}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
     }),
   smartAutofill: (exerciseId: number) => request<SmartAutofill>(`/smart-autofill?exercise_id=${exerciseId}`),
   addSet: (workoutExerciseId: number, payload: { weight: number; reps: number; rpe?: number | null; completed?: boolean }) =>

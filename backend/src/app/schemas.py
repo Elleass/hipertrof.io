@@ -26,6 +26,13 @@ class PlannedExerciseRead(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class PlannedExerciseUpdateRequest(BaseModel):
+    target_sets: int | None = Field(default=None, ge=1)
+    target_reps: int | None = Field(default=None, ge=1)
+    target_weight: float | None = Field(default=None, ge=0)
+    notes: str | None = None
+
+
 class PlannedSessionRead(BaseModel):
     id: int
     name: str
@@ -110,6 +117,26 @@ class WorkoutSummary(BaseModel):
     session: WorkoutSessionRead
     tonnage: float
     completed_sets: int
+    duration_seconds: int | None = None
+
+
+class WorkoutHistoryItem(BaseModel):
+    id: int
+    plan_id: int | None = None
+    planned_session_id: int | None = None
+    session_name: str
+    status: WorkoutStatus
+    started_at: datetime
+    completed_at: datetime | None = None
+    completed_sets: int
+    tonnage: float
+    duration_seconds: int | None = None
+
+
+class SmartAutofillSetRead(BaseModel):
+    set_number: int
+    suggested_weight: float
+    suggested_reps: int
 
 
 class SmartAutofillRead(BaseModel):
@@ -118,6 +145,7 @@ class SmartAutofillRead(BaseModel):
     suggested_reps: int | None = None
     source_session_id: int | None = None
     source_date: datetime | None = None
+    suggested_sets: list[SmartAutofillSetRead] = []
 
 
 class StatisticsSummary(BaseModel):

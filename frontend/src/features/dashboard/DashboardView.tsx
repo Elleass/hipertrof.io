@@ -1,5 +1,5 @@
-import { StatisticsSummary, WorkoutPlan, WorkoutSession } from "../api";
-import { Sidebar } from "./Sidebar";
+import { StatisticsSummary, WorkoutPlan, WorkoutSession } from "../../shared/api/client";
+import { Sidebar } from "../../shared/components/Sidebar";
 
 type DashboardViewProps = {
   error: string | null;
@@ -10,6 +10,7 @@ type DashboardViewProps = {
   tonnage: number;
   onOpenPlan: (plan: WorkoutPlan) => void;
   onNavigateDashboard: () => void;
+  onNavigateHistory: () => void;
   onStartSession: () => void;
 };
 
@@ -22,6 +23,7 @@ export function DashboardView({
   tonnage,
   onOpenPlan,
   onNavigateDashboard,
+  onNavigateHistory,
   onStartSession,
 }: DashboardViewProps) {
   return (
@@ -31,6 +33,7 @@ export function DashboardView({
         loading={loading}
         session={session}
         onNavigateDashboard={onNavigateDashboard}
+        onNavigateHistory={onNavigateHistory}
         onStartSession={onStartSession}
       />
 

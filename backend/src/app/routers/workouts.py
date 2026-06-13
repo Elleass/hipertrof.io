@@ -15,6 +15,7 @@ from app.schemas import (
     SurveyRequest,
     UpdateSetRequest,
     WorkoutExerciseRead,
+    WorkoutHistoryItem,
     WorkoutSessionRead,
     WorkoutSetRead,
     WorkoutSummary,
@@ -44,6 +45,11 @@ def list_sessions(db: Session = Depends(get_db)) -> list[models.WorkoutSession]:
             )
         ).all()
     )
+
+
+@router.get("/workout-sessions/active", response_model=WorkoutSessionRead | None)
+def active_session(planned_session_id: int | None = None, db: Session = Depends(get_db)) -> models.WorkoutSession | None:
+    return workouts.active_session(db, planned_session_id)
 
 
 @router.get("/workout-sessions/{session_id}", response_model=WorkoutSessionRead)
@@ -79,6 +85,21 @@ def smart_autofill(exercise_id: int, db: Session = Depends(get_db)) -> SmartAuto
 @router.get("/statistics/summary", response_model=StatisticsSummary)
 def statistics_summary(db: Session = Depends(get_db)) -> StatisticsSummary:
     return workouts.statistics_summary(db)
+
+
+@router.get("/history", response_model=list[WorkoutHistoryItem])
+def workout_history(db: Session = Depends(get_db)) -> list[WorkoutHistoryItem]:
+    return workouts.workout_history(db)
+
+
+@router.get("/history/{session_id}", response_model=WorkoutSessionRead)
+def workout_history_detail(session_id: int, db: Session = Depends(get_db)) -> models.WorkoutSession:
+    session = workouts.get_session_for_athlete(db, session_id)
+    if session.status != models.WorkoutStatus.COMPLETED:
+        from fastapi import HTTPException, status
+
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Completed workout not found")
+    return session
 
 
 @router.post("/workout-sessions/{session_id}/survey", response_model=SurveyRead)
