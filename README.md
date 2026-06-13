@@ -7,43 +7,35 @@
 
 ## Spis treści
 
-1. [Etap 1: Wybór tematu i model opisowy](#etap-1-wybór-tematu-i-model-opisowy)  
-   1.1. [Kontekst projektu i zrozumienie potrzeb klienta](#11-kontekst-projektu-i-zrozumienie-potrzeb-klienta)  
-   1.2. [Model opisowy systemu](#12-model-opisowy-systemu)  
-   1.3. [Słownik pojęć dziedzinowych](#13-słownik-pojęć-dziedzinowych)  
-2. [Etap 2: Wstępna analiza systemu i model statyczny](#etap-2-wstępna-analiza-systemu-i-model-statyczny)  
-   2.1. [Analiza state of the art](#21-analiza-state-of-the-art)  
-   2.2. [Motywacja i główny przypadek użycia](#22-motywacja-i-główny-przypadek-użycia)  
-   2.3. [Diagram kontekstu C4 — poziom 1](#23-diagram-kontekstu-c4--poziom-1)  
-   2.4. [Model statyczny: diagram klas i komponentów](#24-model-statyczny-diagram-klas-i-komponentów)  
-   2.5. [Diagram stanu sesji treningowej](#25-diagram-stanu-sesji-treningowej)  
-3. [Etap 3: Dynamika systemu i wymagania](#etap-3-dynamika-systemu-i-wymagania)  
-   3.1. [Aktorzy systemu](#31-aktorzy-systemu)  
-   3.2. [Przypadki użycia](#32-przypadki-użycia)  
-   3.3. [Specyfikacja wymagań](#33-specyfikacja-wymagań)  
-   3.4. [Weryfikacja wymagań](#34-weryfikacja-wymagań)  
-   3.5. [Diagramy interakcji](#35-diagramy-interakcji)  
-4. [Etap 4: Projekt architektury i struktury](#etap-4-projekt-architektury-i-struktury)  
-   4.1. [Model wdrożenia](#41-model-wdrożenia)  
-   4.2. [Ostateczna specyfikacja systemu](#42-ostateczna-specyfikacja-systemu)  
-   4.3. [Macierz śladu](#43-macierz-śladu)  
-5. [Testowanie oprogramowania](#5-testowanie-oprogramowania)  
-6. [Model cyklu życia i organizacja prac](#6-model-cyklu-życia-i-organizacja-prac)  
-7. [Szacowanie nakładu pracy](#7-szacowanie-nakładu-pracy)  
-8. [Modelowanie strukturalne/proceduralne](#8-modelowanie-strukturalneproceduralne)  
-9. [Narzędzia CASE, dokumentacja i utrzymanie](#9-narzędzia-case-dokumentacja-i-utrzymanie)  
-10. [Review jakości dokumentacji](#10-review-jakości-dokumentacji)  
-11. [Prototyp systemu](#11-prototyp-systemu)  
+1. [Wprowadzenie, analiza rynku i motywacja](#1-wprowadzenie-analiza-rynku-i-motywacja)
+   1.1. [Kontekst projektu i zrozumienie potrzeb klienta](#11-kontekst-projektu-i-zrozumienie-potrzeb-klienta)
+   1.2. [Model opisowy systemu](#12-model-opisowy-systemu)
+   1.3. [Analiza rynku i istniejących rozwiązań](#13-analiza-rynku-i-istniejących-rozwiązań)
+   1.4. [Motywacja i główny przypadek użycia](#14-motywacja-i-główny-przypadek-użycia)
+2. [Aktorzy systemu](#2-aktorzy-systemu)
+3. [Model statyczny i zachowanie systemu](#3-model-statyczny-i-zachowanie-systemu)
+   3.1. [Diagram kontekstu C4 — poziom 1](#31-diagram-kontekstu-c4--poziom-1)
+   3.2. [Model statyczny: diagram klas i komponentów](#32-model-statyczny-diagram-klas-i-komponentów)
+   3.3. [Diagram stanu sesji treningowej](#33-diagram-stanu-sesji-treningowej)
+4. [Dynamika systemu i wymagania](#4-dynamika-systemu-i-wymagania)
+   4.1. [Przypadki użycia](#41-przypadki-użycia)
+   4.2. [Specyfikacja wymagań](#42-specyfikacja-wymagań)
+   4.3. [Diagramy interakcji](#43-diagramy-interakcji)
+5. [Projekt architektury i struktury](#5-projekt-architektury-i-struktury)
+   5.1. [Model wdrożenia](#51-model-wdrożenia)
+   5.2. [Proponowany model danych](#52-proponowany-model-danych)
+6. [Testowanie oprogramowania](#6-testowanie-oprogramowania)
+7. [Prototyp systemu](#7-prototyp-systemu)
 
 ---
 
-# Etap 1: Wybór tematu i model opisowy
+# 1. Wprowadzenie, analiza rynku i motywacja
 
 ## 1.1. Kontekst projektu i zrozumienie potrzeb klienta
 
 ### 1.1.1. Temat projektu
 
-Tematem projektu jest system **Dziennik Treningów** — aplikacja wspierająca rejestrowanie treningów siłowych, planowanie sesji, analizę progresu współpracę sportowca z trenerem oraz opcjonalne uwzględnianie aktywności cardio pobieranych ze Strava API.
+Tematem projektu jest system **Dziennik Treningów** — aplikacja wspierająca rejestrowanie treningów siłowych, planowanie sesji, analizę progresu, współpracę sportowca z trenerem oraz opcjonalne uwzględnianie aktywności cardio pobieranych ze Strava API.
 
 System ma być projektowany przede wszystkim jako narzędzie używane **w trakcie treningu**, a więc w warunkach, w których użytkownik nie chce wykonywać wielu operacji na ekranie telefonu. Z tego powodu centralną funkcjonalnością systemu jest szybki przepływ treningowy oraz mechanizm **Smart Auto-fill**, który podpowiada ciężar i liczbę powtórzeń na podstawie ostatniego wykonania tego samego ćwiczenia.
 
@@ -70,7 +62,7 @@ Dziennik Treningów jest aplikacją umożliwiającą użytkownikowi rejestrowani
 
 Podczas aktywnej sesji system podpowiada wartości dla nowej serii na podstawie historii ostatniego wykonania tego samego ćwiczenia. Mechanizm ten nazywa się Smart Auto-fill. Użytkownik może zatwierdzić zaproponowane wartości jednym kliknięciem albo edytować ciężar i liczbę powtórzeń, jeżeli wykonał serię inaczej niż poprzednio.
 
-Po zakończeniu sesji system oblicza tonaż, aktualizuje historię treningową oraz przygotowuje dane do statystyk. Użytkownik może połączyć konto ze Stravą, aby system uwzględniał także aktywności cardio przy obliczaniu tygodniowego obciążenia. System może również prezentować podsumowania motywacyjne, streaki, odznaki i Goryl-stats.
+Po zakończeniu sesji system oblicza objętość treningową, aktualizuje historię treningową oraz przygotowuje dane do statystyk. Użytkownik może połączyć konto ze Stravą, aby system uwzględniał także aktywności cardio przy obliczaniu tygodniowego obciążenia. System może również prezentować podsumowania motywacyjne, streaki, odznaki i Goryl-stats.
 
 Trener może zaprosić sportowca do relacji trener–podopieczny. Po akceptacji zaproszenia trener może tworzyć i przypisywać plany treningowe oraz zostawiać notatki przy sesjach. Trener nie może jednak modyfikować historycznych danych treningowych podopiecznego, ponieważ są one zapisem faktycznie wykonanego treningu.
 
@@ -80,7 +72,7 @@ Trener może zaprosić sportowca do relacji trener–podopieczny. Po akceptacji 
 |---|---|
 | BR-01 | Prawidłowo zapisana sesja treningowa musi zawierać co najmniej jedno ćwiczenie i jedną wykonaną serię. |
 | BR-02 | Smart Auto-fill podpowiada dane, ale nie narzuca ich użytkownikowi. Użytkownik zawsze może edytować ciężar i powtórzenia. |
-| BR-03 | Tonaż jest obliczany jako suma iloczynów `ciężar × powtórzenia` dla wszystkich wykonanych serii. |
+| BR-03 | Objętość treningowa jest obliczana jako suma iloczynów `ciężar × powtórzenia` dla wszystkich wykonanych serii. |
 | BR-04 | Trener uzyskuje dostęp do danych podopiecznego dopiero po obustronnej akceptacji relacji. |
 | BR-05 | Trener może komentować sesje podopiecznego, ale nie może modyfikować historycznych danych treningowych. |
 | BR-06 | Integracja ze Stravą jest opcjonalna. Brak Stravy nie blokuje korzystania z głównego przepływu treningowego. |
@@ -89,11 +81,9 @@ Trener może zaprosić sportowca do relacji trener–podopieczny. Po akceptacji 
 
 ---
 
-# Etap 2: Wstępna analiza systemu i model statyczny
+## 1.3. Analiza rynku i istniejących rozwiązań
 
-## 2.1. Analiza state of the art
-
-### 2.1.1. Istniejące rozwiązania
+### 1.3.1. Istniejące rozwiązania
 
 Na rynku istnieją aplikacje wspierające rejestrowanie treningów siłowych, m.in. Strong, Hevy, FitNotes i JEFIT. Oferują one rozbudowane bazy ćwiczeń, historię treningów i wykresy progresu. Ich głównym problemem z perspektywy projektowanego systemu jest jednak duża liczba interakcji wymaganych podczas treningu.
 
@@ -104,7 +94,7 @@ Na rynku istnieją aplikacje wspierające rejestrowanie treningów siłowych, m.
 | FitNotes | prostota, lokalność danych | ograniczona nowoczesność UX i automatyzacji |
 | JEFIT | duża baza ćwiczeń i planów | rozbudowany interfejs, większy próg wejścia |
 
-### 2.1.2. Wnioski z analizy konkurencji
+### 1.3.2. Wnioski z analizy konkurencji
 
 1. Samo przechowywanie historii treningów nie jest wystarczającą przewagą konkurencyjną.
 2. Główna wartość projektowanego systemu powinna wynikać z minimalizacji obsługi podczas treningu.
@@ -114,9 +104,9 @@ Na rynku istnieją aplikacje wspierające rejestrowanie treningów siłowych, m.
 
 ---
 
-## 2.2. Motywacja i główny przypadek użycia
+## 1.4. Motywacja i główny przypadek użycia
 
-### 2.2.1. Motywacja
+### 1.4.1. Motywacja
 
 Systematyczne zapisywanie treningów jest jednym z podstawowych warunków świadomego progresu. Użytkownik powinien wiedzieć, czy zwiększa ciężary, poprawia objętość treningową, utrzymuje regularność oraz czy jego tygodniowe obciążenie nie staje się zbyt wysokie. Papierowe dzienniki nie rozwiązują tego problemu kompleksowo, a istniejące aplikacje często wymagają zbyt wiele ręcznej obsługi.
 
@@ -126,13 +116,13 @@ Projektowany system odpowiada na tę lukę przez połączenie trzech wartości:
 2. automatycznych podpowiedzi z historii,
 3. motywującej interpretacji danych.
 
-### 2.2.2. Główny przypadek użycia na najwyższym poziomie abstrakcji
+### 1.4.2. Główny przypadek użycia na najwyższym poziomie abstrakcji
 
 **UC-GŁÓWNY: Szybkie zarejestrowanie treningu siłowego**
 
 Aktor główny: Sportowiec  
 Cel: Zapisanie treningu przy minimalnej liczbie interakcji z ekranem.  
-Rezultat: Sesja zostaje zapisana, serie są utrwalone, tonaż jest obliczony, a historia treningowa zaktualizowana.
+Rezultat: Sesja zostaje zapisana, serie są utrwalone, objętość treningowa jest obliczona, a historia treningowa zaktualizowana.
 
 Ogólny przebieg:
 
@@ -144,11 +134,27 @@ Ogólny przebieg:
 6. Sportowiec zatwierdza serię jednym kliknięciem albo edytuje wartości.
 7. System zapisuje serię.
 8. Po wykonaniu treningu sportowiec kończy sesję.
-9. System oblicza tonaż i aktualizuje statystyki.
+9. System oblicza objętość treningową i aktualizuje statystyki.
 
 ---
 
-## 2.3. Diagram kontekstu C4 — poziom 1
+# 2. Aktorzy systemu
+
+Poniżsi aktorzy wyznaczają granice odpowiedzialności systemu i porządkują późniejsze przypadki użycia, wymagania oraz diagramy interakcji.
+
+| Aktor | Typ | Opis | Przykładowe cele |
+|---|---|---|---|
+| Sportowiec | ludzki, główny | Użytkownik wykonujący i rejestrujący treningi. | rozpocząć sesję, dodać serię, sprawdzić progres |
+| Trener | ludzki, pomocniczy | Użytkownik układający plany i komentujący treningi podopiecznych. | przypisać plan, przejrzeć historię, dodać notatkę |
+| Administrator | ludzki, administracyjny | Zarządza konfiguracją systemu i reaguje na problemy techniczne. | zarządzać użytkownikami, monitorować działanie systemu |
+| Strava API | system zewnętrzny | Dostarcza dane o aktywnościach cardio po autoryzacji. | zwrócić dane cardio do obciążenia tygodniowego |
+| Serwis powiadomień | system zewnętrzny | Dostarcza techniczną możliwość wysłania push/e-mail. | wysłać przypomnienie lub komunikat |
+
+---
+
+# 3. Model statyczny i zachowanie systemu
+
+## 3.1. Diagram kontekstu C4 — poziom 1
 
 Poniższy diagram pokazuje system w jego otoczeniu biznesowym. Strava API i serwis powiadomień są systemami zewnętrznymi. Sportowiec i trener są aktorami ludzkimi.
 
@@ -166,11 +172,14 @@ flowchart TB
     System -->|wysyła zlecenia powiadomień| Powiadomienia
 ```
 
+**Rysunek 1. Diagram kontekstu C4 systemu Dziennik Treningów.**
+Diagram pokazuje granicę systemu oraz najważniejsze podmioty, które z nim współpracują. Sportowiec i trener korzystają bezpośrednio z aplikacji, natomiast Strava API i serwis powiadomień są systemami zewnętrznymi wspierającymi funkcje dodatkowe.
+
 ---
 
-## 2.4. Model statyczny: diagram klas i komponentów
+## 3.2. Model statyczny: diagram klas i komponentów
 
-### 2.4.1. Diagram klas
+### 3.2.1. Diagram klas
 
 ```mermaid
 classDiagram
@@ -213,13 +222,13 @@ classDiagram
         +Date dataPlanowana
         +Date dataWykonania
         +StatusSesji status
-        +Float tonaz
+        +Float objetoscTreningowa
         +rozpocznij()
         +wstrzymaj()
         +wznow()
         +zakoncz()
         +anuluj()
-        +obliczTonaz()
+        +obliczObjetoscTreningowa()
     }
 
     class Cwiczenie {
@@ -285,7 +294,10 @@ classDiagram
     Uzytkownik "1" --> "0..*" Znajomosc : uczestniczy
 ```
 
-### 2.4.2. Diagram komponentów
+**Rysunek 2. Diagram klas głównych obiektów domenowych.**
+Diagram przedstawia model obiektowy aplikacji: użytkowników, role sportowca i trenera, plany treningowe, sesje, serie oraz elementy wspierające, takie jak notatki, ankiety i odznaki. Pokazuje też, jak główny proces treningowy przekłada się na obiekty: plan zawiera sesje, sesja zawiera serie, a seria dotyczy konkretnego ćwiczenia.
+
+### 3.2.2. Diagram komponentów
 
 ```mermaid
 flowchart LR
@@ -325,7 +337,10 @@ flowchart LR
     StravaAdapter --> DB
 ```
 
-### 2.4.3. Interfejsy komponentów (zrobić z tego opis diagramu)
+**Rysunek 3. Diagram komponentów systemu.**
+Diagram opisuje logiczny podział aplikacji na frontend, API oraz moduły backendowe. Najważniejszym komponentem z perspektywy prototypu jest menedżer treningów, który obsługuje sesje, serie i Smart Auto-fill, a pozostałe moduły rozszerzają system o plany, statystyki, powiadomienia i integrację ze Stravą.
+
+### 3.2.3. Interfejsy komponentów
 
 | Komponent | Odpowiedzialność | Przykładowe interfejsy |
 |---|---|---|
@@ -334,14 +349,14 @@ flowchart LR
 | Moduł uwierzytelniania | logowanie, rejestracja, role | `POST /auth/login`, `POST /auth/register` |
 | Menedżer treningów | sesje, ćwiczenia, serie, Smart Auto-fill | `POST /sessions`, `POST /sets`, `GET /exercises/{id}/last-set` |
 | Moduł planów i trenera | plany, podopieczni, przypisania | `POST /plans`, `POST /coach/assign-plan` |
-| Moduł statystyk | tonaż, wykresy, streaki, odznaki | `GET /stats/progress`, `GET /stats/volume` |
+| Moduł statystyk | objętość treningowa, wykresy, streaki, odznaki | `GET /stats/progress`, `GET /stats/volume` |
 | Adapter Stravy | izolacja integracji zewnętrznej | `GET /integrations/strava/sync` |
 | Menedżer powiadomień | zlecanie powiadomień | `POST /notifications/send` |
 | PostgreSQL | trwałe przechowywanie danych | tabele użytkowników, sesji, serii, ćwiczeń |
 
 ---
 
-## 2.5. Diagram stanu sesji treningowej
+## 3.3. Diagram stanu sesji treningowej
 
 ```mermaid
 stateDiagram-v2
@@ -359,7 +374,10 @@ stateDiagram-v2
     Przegapiona --> [*]
 ```
 
-### Tabela przejść stanów (zrobić opis słowny wykresu)
+**Rysunek 4. Diagram stanu sesji treningowej.**
+Diagram pokazuje cykl życia pojedynczej sesji treningowej: od zaplanowania, przez rozpoczęcie i ewentualne wstrzymanie, aż do zakończenia, anulowania albo oznaczenia jako przegapionej. Ten model określa, kiedy sesja może być edytowana i kiedy może zostać uwzględniona w historii oraz statystykach.
+
+### 3.3.1. Tabela przejść stanów
 
 | Stan początkowy | Zdarzenie | Stan końcowy | Opis |
 |---|---|---|---|
@@ -368,28 +386,16 @@ stateDiagram-v2
 | Zaplanowana | przekroczony termin | Przegapiona | Sesja nie została wykonana w planowanym czasie. |
 | Trwająca | `wstrzymaj` | Wstrzymana | Użytkownik robi dłuższą przerwę. |
 | Wstrzymana | `wznow` | Trwająca | Użytkownik wraca do treningu. |
-| Trwająca | `zakoncz` | Zakończona | System zapisuje sesję i oblicza tonaż. |
+| Trwająca | `zakoncz` | Zakończona | System zapisuje sesję i oblicza objętość treningową. |
 | Trwająca/Wstrzymana | `anuluj` | Anulowana | Użytkownik przerywa sesję bez zapisu jako zakończonej. |
 
 ---
 
-# Etap 3: Dynamika systemu i wymagania
+# 4. Dynamika systemu i wymagania
 
-## 3.1. Aktorzy systemu
+## 4.1. Przypadki użycia
 
-| Aktor | Typ | Opis | Przykładowe cele |
-|---|---|---|---|
-| Sportowiec | ludzki, główny | Użytkownik wykonujący i rejestrujący treningi. | rozpocząć sesję, dodać serię, sprawdzić progres |
-| Trener | ludzki, pomocniczy | Użytkownik układający plany i komentujący treningi podopiecznych. | przypisać plan, przejrzeć historię, dodać notatkę |
-| Administrator | Ludzki | Zarządza systemem | Cele |
-| Strava API | system zewnętrzny | Dostarcza dane o aktywnościach cardio po autoryzacji. | zwrócić dane cardio do obciążenia tygodniowego |
-| Serwis powiadomień | system zewnętrzny | Dostarcza techniczną możliwość wysłania push/e-mail. | wysłać przypomnienie lub komunikat |
-
----
-
-## 3.2. Przypadki użycia
-
-### 3.2.1. Lista przypadków użycia
+### 4.1.1. Lista przypadków użycia
 
 | ID | Nazwa | Aktor główny | Priorytet |
 |---|---|---|---|
@@ -398,7 +404,7 @@ stateDiagram-v2
 | UC-03 | Zatwierdzenie serii przez Smart Auto-fill | Sportowiec | wysoki |
 | UC-04 | Edycja ciężaru i powtórzeń w aktywnej serii | Sportowiec | wysoki |
 | UC-05 | Użycie poprzedniego ciężaru | Sportowiec | wysoki |
-| UC-06 | Zakończenie sesji i obliczenie tonażu | Sportowiec | wysoki |
+| UC-06 | Zakończenie sesji i obliczenie objętości treningowej | Sportowiec | wysoki |
 | UC-07 | Utworzenie planu treningowego | Sportowiec / Trener | średni |
 | UC-08 | Przypisanie planu podopiecznemu | Trener | średni |
 | UC-09 | Dodanie notatki do sesji | Sportowiec / Trener | średni |
@@ -409,7 +415,7 @@ stateDiagram-v2
 | UC-14 | Wysłanie powiadomienia o treningu | System czasu | niski |
 | UC-15 | Dodanie znajomego | Sportowiec | niski |
 
-### 3.2.2. UC-01 — Rozpoczęcie sesji treningowej
+### 4.1.2. UC-01 — Rozpoczęcie sesji treningowej
 
 | Pole | Opis |
 |---|---|
@@ -421,7 +427,7 @@ stateDiagram-v2
 | Scenariusze alternatywne | A1: Brak planu — użytkownik rozpoczyna sesję ad hoc. A2: Sesja już trwa — system otwiera aktywną sesję zamiast tworzyć nową. |
 | Kryterium akceptacji | Użytkownik może przejść z dashboardu do aktywnej sesji i rozpocząć dodawanie ćwiczeń. |
 
-### 3.2.3. UC-02 — Dodanie ćwiczenia do sesji
+### 4.1.3. UC-02 — Dodanie ćwiczenia do sesji
 
 | Pole | Opis |
 |---|---|
@@ -433,7 +439,7 @@ stateDiagram-v2
 | Scenariusze alternatywne | A1: Ćwiczenia nie ma w bibliotece — użytkownik tworzy własne ćwiczenie. A2: Brak historii — system nie pokazuje podpowiedzi. |
 | Kryterium akceptacji | Ćwiczenie pojawia się w aktywnej sesji i użytkownik może dodać serię. |
 
-### 3.2.4. UC-03 — Zatwierdzenie serii przez Smart Auto-fill
+### 4.1.4. UC-03 — Zatwierdzenie serii przez Smart Auto-fill
 
 | Pole | Opis |
 |---|---|
@@ -445,7 +451,7 @@ stateDiagram-v2
 | Scenariusze alternatywne | A1: Użytkownik zmienia ciężar. A2: Użytkownik zmienia liczbę powtórzeń. A3: Użytkownik usuwa serię przed zapisem. |
 | Kryterium akceptacji | Przy istniejącej podpowiedzi użytkownik może zapisać serię maksymalnie w dwóch akcjach. |
 
-### 3.2.5. UC-04 — Edycja ciężaru i powtórzeń w aktywnej serii
+### 4.1.5. UC-04 — Edycja ciężaru i powtórzeń w aktywnej serii
 
 | Pole | Opis |
 |---|---|
@@ -457,7 +463,7 @@ stateDiagram-v2
 | Scenariusze alternatywne | A1: Użytkownik przywraca poprzedni ciężar przyciskiem `Poprzedni ciężar`. A2: Użytkownik anuluje edycję. |
 | Kryterium akceptacji | Użytkownik może zmienić ciężar i powtórzenia bez opuszczania ekranu aktywnego treningu. |
 
-### 3.2.6. UC-05 — Użycie poprzedniego ciężaru
+### 4.1.6. UC-05 — Użycie poprzedniego ciężaru
 
 | Pole | Opis |
 |---|---|
@@ -468,42 +474,42 @@ stateDiagram-v2
 | Scenariusz główny | 1. Użytkownik klika przycisk `Poprzedni ciężar`. 2. System pobiera ostatni ciężar dla ćwiczenia. 3. System wstawia wartość do aktywnej serii. |
 | Kryterium akceptacji | Przycisk działa bez ręcznego wpisywania wartości przez użytkownika. |
 
-### 3.2.7. UC-06 — Zakończenie sesji i obliczenie tonażu
+### 4.1.7. UC-06 — Zakończenie sesji i obliczenie objętości treningowej
 
 | Pole | Opis |
 |---|---|
 | Aktor główny | Sportowiec |
 | Cel | Zapisanie sesji jako zakończonej i obliczenie jej podsumowania. |
 | Warunki początkowe | Sesja trwa i zawiera co najmniej jedno ćwiczenie oraz jedną wykonaną serię. |
-| Warunki końcowe | Sesja ma status `Zakończona`, a tonaż i statystyki są zaktualizowane. |
-| Scenariusz główny | 1. Użytkownik wybiera `Zakończ trening`. 2. System sprawdza minimalną poprawność sesji. 3. System oblicza tonaż. 4. System zapisuje sesję. 5. System aktualizuje statystyki. 6. System wraca do widoku podsumowania. |
+| Warunki końcowe | Sesja ma status `Zakończona`, a objętość treningowa i statystyki są zaktualizowane. |
+| Scenariusz główny | 1. Użytkownik wybiera `Zakończ trening`. 2. System sprawdza minimalną poprawność sesji. 3. System oblicza objętość treningową. 4. System zapisuje sesję. 5. System aktualizuje statystyki. 6. System wraca do widoku podsumowania. |
 | Scenariusze alternatywne | A1: Sesja nie ma serii — system informuje, że nie można jej zakończyć jako poprawnej. A2: Użytkownik anuluje zakończenie. |
-| Kryterium akceptacji | Po zakończeniu sesji użytkownik widzi podsumowanie z wykonanymi ćwiczeniami i tonażem. |
+| Kryterium akceptacji | Po zakończeniu sesji użytkownik widzi podsumowanie z wykonanymi ćwiczeniami i objętością treningową. |
 
 ---
 
-## 3.3. Specyfikacja wymagań
+## 4.2. Specyfikacja wymagań
 
-### 3.3.1. Wymagania funkcjonalne (zamienić krytyczny na wysoki)
+### 4.2.1. Wymagania funkcjonalne
 
 | ID | Wymaganie | Priorytet | Kryterium akceptacji |
 |---|---|---|---|
 | FR-01 | System umożliwia rejestrację i logowanie użytkownika. | wysoki | Użytkownik może utworzyć konto i zalogować się. |
 | FR-02 | Użytkownik może edytować podstawowe dane profilu. | średni | Zmiany profilu są zapisywane i widoczne po odświeżeniu. |
-| FR-03 | Użytkownik może rozpocząć sesję z planu albo ad hoc. | krytyczny | Sesja przechodzi do stanu `Trwająca`. |
-| FR-04 | Użytkownik może dodać ćwiczenie do aktywnej sesji. | krytyczny | Ćwiczenie pojawia się w ekranie sesji. |
-| FR-05 | Użytkownik może dodać serię z ciężarem i liczbą powtórzeń. | krytyczny | Seria zostaje zapisana w ramach ćwiczenia. |
-| FR-06 | System podpowiada dane serii na podstawie ostatniego wykonania ćwiczenia. | krytyczny | Po dodaniu ćwiczenia system pokazuje poprzedni ciężar i powtórzenia, jeżeli istnieją. |
-| FR-07 | Użytkownik może zatwierdzić podpowiedzianą serię jednym kliknięciem. | krytyczny | Seria zostaje zapisana po kliknięciu `Zrobione`. |
-| FR-08 | Użytkownik może edytować ciężar i powtórzenia na żywo podczas sesji. | krytyczny | Zmienione wartości zostają zapisane bez opuszczania ekranu treningu. |
+| FR-03 | Użytkownik może rozpocząć sesję z planu albo ad hoc. | wysoki | Sesja przechodzi do stanu `Trwająca`. |
+| FR-04 | Użytkownik może dodać ćwiczenie do aktywnej sesji. | wysoki | Ćwiczenie pojawia się w ekranie sesji. |
+| FR-05 | Użytkownik może dodać serię z ciężarem i liczbą powtórzeń. | wysoki | Seria zostaje zapisana w ramach ćwiczenia. |
+| FR-06 | System podpowiada dane serii na podstawie ostatniego wykonania ćwiczenia. | wysoki | Po dodaniu ćwiczenia system pokazuje poprzedni ciężar i powtórzenia, jeżeli istnieją. |
+| FR-07 | Użytkownik może zatwierdzić podpowiedzianą serię jednym kliknięciem. | wysoki | Seria zostaje zapisana po kliknięciu `Zrobione`. |
+| FR-08 | Użytkownik może edytować ciężar i powtórzenia na żywo podczas sesji. | wysoki | Zmienione wartości zostają zapisane bez opuszczania ekranu treningu. |
 | FR-09 | System udostępnia przycisk ustawienia poprzedniego ciężaru. | wysoki | Kliknięcie przywraca ostatni ciężar danego ćwiczenia. |
-| FR-10 | System umożliwia zakończenie sesji treningowej. | krytyczny | Sesja otrzymuje status `Zakończona`. |
-| FR-11 | System oblicza tonaż sesji. | wysoki | Tonaż jest równy sumie ciężar × powtórzenia dla wykonanych serii. |
+| FR-10 | System umożliwia zakończenie sesji treningowej. | wysoki | Sesja otrzymuje status `Zakończona`. |
+| FR-11 | System oblicza objętość treningową sesji. | wysoki | Objętość treningowa jest równa sumie ciężar × powtórzenia dla wykonanych serii. |
 | FR-12 | System umożliwia tworzenie planów treningowych. | średni | Plan można zapisać i ponownie otworzyć. |
 | FR-13 | System umożliwia korzystanie z biblioteki ćwiczeń. | wysoki | Użytkownik może wyszukiwać i wybierać ćwiczenia. |
 | FR-14 | System pozwala dodać własne ćwiczenie. | średni | Nowe ćwiczenie jest dostępne w bibliotece użytkownika. |
 | FR-15 | System umożliwia dodanie notatki do sesji. | średni | Notatka jest widoczna przy danej sesji. |
-| FR-16 | System może wyświetlać statystyki postępu. | średni | Użytkownik widzi historię ciężaru lub tonażu w czasie. |
+| FR-16 | System może wyświetlać statystyki postępu. | średni | Użytkownik widzi historię ciężaru lub objętości treningowej w czasie. |
 | FR-17 | System może obsługiwać ankietę przed treningiem. | niski | Użytkownik może ocenić sen i samopoczucie w skali 1–5. |
 | FR-18 | System może sugerować intensywność treningu. | niski | System zwraca sugestię: lekki, normalny albo ciężki trening. |
 | FR-19 | System może integrować się ze Strava API. | niski | Po autoryzacji system pobiera dane cardio. |
@@ -512,7 +518,7 @@ stateDiagram-v2
 | FR-22 | System może wysyłać powiadomienia. | niski | Użytkownik otrzymuje przypomnienie push lub e-mail. |
 | FR-23 | Użytkownik może eksportować dane do CSV lub JSON. | średni | Plik eksportu zawiera historię treningów. |
 
-### 3.3.2. Wymagania niefunkcjonalne
+### 4.2.2. Wymagania niefunkcjonalne
 
 | ID | Kategoria | Wymaganie | Kryterium weryfikacji |
 |---|---|---|---|
@@ -531,9 +537,9 @@ stateDiagram-v2
 ---
 
 
-## 3.5. Diagramy interakcji
+## 4.3. Diagramy interakcji
 
-### 3.5.1. Diagram sekwencji — Smart Auto-fill i zapis serii
+### 4.3.1. Diagram sekwencji — Smart Auto-fill i zapis serii
 
 ```mermaid
 sequenceDiagram
@@ -561,7 +567,10 @@ sequenceDiagram
     UI-->>S: pokazuje następną serię
 ```
 
-### 3.5.2. Diagram sekwencji — rozpoczęcie i zakończenie sesji
+**Rysunek 5. Diagram sekwencji Smart Auto-fill i zapisu serii.**
+Diagram opisuje fragment aktywnego treningu, w którym sportowiec wybiera ćwiczenie, a system pobiera ostatnie zapisane wartości dla tego ćwiczenia. Następnie użytkownik zatwierdza lub edytuje podpowiedź, a backend zapisuje serię w bazie danych.
+
+### 4.3.2. Diagram sekwencji — rozpoczęcie i zakończenie sesji
 
 ```mermaid
 sequenceDiagram
@@ -586,22 +595,25 @@ sequenceDiagram
     API->>TM: zakonczSesje()
     TM->>DB: pobierz serie sesji
     DB-->>TM: lista serii
-    TM->>TM: obliczTonaz()
-    TM->>DB: zapisz status Zakończona i tonaż
+    TM->>TM: obliczObjetoscTreningowa()
+    TM->>DB: zapisz status Zakończona i objętość treningową
     TM->>ST: aktualizujStatystyki()
     ST->>DB: zapisz agregaty
     API-->>UI: podsumowanie sesji
     UI-->>S: wynik treningu
 ```
 
+**Rysunek 6. Diagram sekwencji rozpoczęcia i zakończenia sesji.**
+Diagram przedstawia główny przepływ biznesowy aplikacji: utworzenie aktywnej sesji, wykonanie treningu i zapisanie zakończonej sesji. Pokazuje też moment obliczenia objętości treningowej oraz aktualizacji statystyk po zakończeniu treningu.
+
 
 ---
 
-# Etap 4: Projekt architektury i struktury
+# 5. Projekt architektury i struktury
 
-## 4.1. Model wdrożenia
+## 5.1. Model wdrożenia
 
-### 4.1.1. Architektura fizyczna
+### 5.1.1. Architektura fizyczna
 
 System jest projektowany jako aplikacja wielowarstwowa. Warstwa interfejsu użytkownika działa na urządzeniu użytkownika. Warstwa logiki biznesowej działa na serwerze aplikacyjnym. Warstwa danych jest realizowana przez bazę PostgreSQL oraz opcjonalnie Redis jako pamięć podręczną.
 
@@ -636,41 +648,45 @@ flowchart TB
     Notif --> Push
 ```
 
-### 4.1.2. Struktura trójwarstwowa
+**Rysunek 7. Diagram wdrożenia systemu.**
+Diagram pokazuje fizyczny podział systemu na urządzenie użytkownika, serwer aplikacyjny, warstwę danych i systemy zewnętrzne. Frontend komunikuje się z backendem przez HTTPS, backend zapisuje dane w PostgreSQL oraz opcjonalnie komunikuje się ze Stravą i serwisem powiadomień.
+
+### 5.1.2. Struktura trójwarstwowa
 
 | Warstwa | Odpowiednik w projekcie | Odpowiedzialność |
 |---|---|---|
 | Warstwa interfejsu użytkownika | aplikacja web/mobile | prezentacja dashboardu, planów, sesji, serii i statystyk |
 | Warstwa reguł biznesowych | API backendowe i moduły domenowe | obsługa sesji, Smart Auto-fill, planów, statystyk, uprawnień |
-| Warstwa danych | PostgreSQL| trwałe przechowywanie danych i cache często używanych informacji |
+| Warstwa danych | PostgreSQL | trwałe przechowywanie danych i cache często używanych informacji |
 
-### 4.1.3. Konfiguracja technologiczna  (zmienic z node js na python, fastapi i orm na sqlalchemy)
+### 5.1.3. Konfiguracja technologiczna
 
 Poniższy stack jest referencyjną konfiguracją technologiczną systemu. Jeżeli implementacja używa innych narzędzi, należy podmienić nazwy technologii bez zmiany architektury logicznej.
 
 | Obszar | Technologia | Uzasadnienie |
 |---|---|---|
 | Frontend | React + TypeScript | szybkie tworzenie interfejsu web/mobile-first |
-| Backend | Node.js + Express/NestJS | sprawna implementacja REST API i logiki biznesowej |
+| Backend | Python + FastAPI | sprawna implementacja REST API i logiki biznesowej |
 | Baza danych | PostgreSQL | relacyjny model danych i spójność transakcyjna |
-| ORM | Prisma / TypeORM | mapowanie obiektowo-relacyjne |
-| Cache  | cache statystyk i odznak |
+| ORM | SQLAlchemy | mapowanie obiektowo-relacyjne |
+| Cache | opcjonalny cache statystyk i odznak | przyspieszenie odczytów danych agregowanych |
 | Komunikacja | REST/JSON przez HTTPS | prosty i czytelny kontrakt frontend–backend |
 | Uwierzytelnianie | JWT / sesje serwerowe | kontrola dostępu do API |
 | Integracja Stravy | OAuth 2.0 + Adapter | bezpieczne połączenie z zewnętrznym API |
 | Testy | Jest/Vitest, Playwright/Cypress | testy jednostkowe, integracyjne i E2E |
+
 ---
 
 
 
-### 4.2.3. Proponowany model danych
+## 5.2. Proponowany model danych
 
 | Encja | Najważniejsze pola | Relacje |
 |---|---|---|
 | `users` | `id`, `email`, `password_hash`, `name`, `weight`, `height` | ma wiele planów, sesji, odznak |
 | `roles` | `id`, `user_id`, `role` | przypisane do użytkownika |
 | `training_plans` | `id`, `owner_id`, `name`, `goal`, `start_date`, `end_date` | zawiera sesje planowane |
-| `training_sessions` | `id`, `user_id`, `plan_id`, `status`, `planned_at`, `performed_at`, `tonnage` | zawiera serie i notatki |
+| `training_sessions` | `id`, `user_id`, `plan_id`, `status`, `planned_at`, `performed_at`, `training_volume` | zawiera serie i notatki |
 | `exercises` | `id`, `name`, `muscle_group`, `type`, `technique_url` | używane przez serie |
 | `sets` | `id`, `session_id`, `exercise_id`, `set_number`, `weight_kg`, `reps`, `rpe`, `completed` | należy do sesji i ćwiczenia |
 | `notes` | `id`, `session_id`, `author_id`, `content`, `author_type` | należy do sesji |
@@ -683,17 +699,17 @@ Poniższy stack jest referencyjną konfiguracją technologiczną systemu. Jeżel
 ---
 
 
-# 5. Testowanie oprogramowania
+# 6. Testowanie oprogramowania
 
-## 5.1. Strategia testowania
+## 6.1. Strategia testowania
 
 Testowanie systemu powinno obejmować weryfikację, czyli sprawdzenie zgodności z wymaganiami, oraz walidację, czyli sprawdzenie, czy system faktycznie rozwiązuje problem użytkownika. W przypadku tego projektu najważniejsza jest walidacja głównego przepływu treningowego: użytkownik powinien móc zapisać serię szybko, bez rozproszenia i bez zbędnych ekranów.
 
-## 5.2. Typy testów (zaznaczyć albo dodać który jest modułowy)
+## 6.2. Typy testów
 
 | Typ testu | Zakres w projekcie |
 |---|---|
-| Testy jednostkowe | obliczanie tonażu, wybór ostatniej serii, walidacja danych serii |
+| Testy jednostkowe | obliczanie objętości treningowej, wybór ostatniej serii, walidacja danych serii |
 | Testy integracyjne | zapis serii przez API do bazy, synchronizacja statystyk, relacja trener–podopieczny |
 | Testy systemowe | pełny przepływ od dashboardu do zakończenia sesji |
 | Testy funkcjonalne Black Box | sprawdzenie wymagań bez znajomości kodu |
@@ -702,7 +718,7 @@ Testowanie systemu powinno obejmować weryfikację, czyli sprawdzenie zgodności
 | Testy bezpieczeństwa | dostęp do danych, autoryzacja trenera, ochrona tokenów |
 | Testy użyteczności | liczba kliknięć, czytelność UI, obsługa jedną ręką |
 
-## 5.3. Przypadki testowe
+## 6.3. Przypadki testowe
 
 | ID | Nazwa testu | Typ | Warunki | Kroki | Oczekiwany rezultat |
 |---|---|---|---|---|---|
@@ -713,22 +729,22 @@ Testowanie systemu powinno obejmować weryfikację, czyli sprawdzenie zgodności
 | TC-05 | Edycja serii | funkcjonalny | aktywna seria | zmień ciężar i powtórzenia | seria zapisuje nowe wartości |
 | TC-06 | Maksymalnie 2 kliknięcia | użyteczności | Smart Auto-fill aktywny | zatwierdź serię | zapis wymaga maksymalnie 2 akcji |
 | TC-07 | Zakończenie sesji | systemowy | sesja ma serię | kliknij `Zakończ trening` | sesja ma status `Zakończona` |
-| TC-08 | Obliczanie tonażu | jednostkowy | serie: 100×5, 80×10 | oblicz tonaż | wynik: 1300 kg |
+| TC-08 | Obliczanie objętości treningowej | jednostkowy | serie: 100×5, 80×10 | oblicz objętość treningową | wynik: 1300 kg |
 | TC-09 | Brak serii przy zakończeniu | funkcjonalny | sesja bez serii | kliknij `Zakończ trening` | system pokazuje błąd walidacji |
 | TC-10 | Statystyki progresu | integracyjny | zakończona sesja | otwórz statystyki | dane obejmują zakończoną sesję |
 | TC-OFF-01 | Zapis offline | systemowy | brak internetu | dodaj serię | seria zapisuje się lokalnie i synchronizuje po powrocie internetu |
 
 ---
 
-# 11. Prototyp systemu
+# 7. Prototyp systemu
 
-## 11.1. Cel prototypu
+## 7.1. Cel prototypu
 
 Celem prototypu jest pokazanie głównego procesu biznesowego aplikacji, czyli szybkiego wykonania i zapisania treningu siłowego. Prototyp nie stanowi osobnej architektury systemu i nie zmienia docelowego zakresu opisanego w poprzednich rozdziałach. Jest demonstracją najważniejszego przepływu użytkownika, który pozwala zweryfikować, czy aplikacja rzeczywiście ogranicza liczbę interakcji z ekranem podczas treningu.
 
 Najważniejsza decyzja dotycząca prototypu brzmi: **prototyp powinien skupić się na jakości głównego przepływu treningowego, a nie na implementacji wszystkich funkcji pobocznych**. Dzięki temu projekt pozostaje zgodny z pierwotną motywacją: aplikacja ma być szybkim, wygodnym i praktycznym dodatkiem do treningu, a nie kolejnym narzędziem wymagającym długiej obsługi podczas ćwiczeń.
 
-## 11.2. Zakres prototypu
+## 7.2. Zakres prototypu
 
 W prototypie należy skupić się na przepływie, który najlepiej pokazuje wartość systemu:
 
