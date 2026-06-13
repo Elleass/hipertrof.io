@@ -1,1 +1,9 @@
 .venv
+__pycache__/
+*.pyc
+.pytest_cache/
+hipertrof_dev.db
+node_modules/
+.npm-cache/
+dist/
+.env
